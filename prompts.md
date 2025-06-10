@@ -144,3 +144,6 @@ You should always be createing a new version if you'd made modifications to the 
 
 ## Ultra Mode Blank Screen Bug
 Ok. So Ultra difficulty isn't displaying at all, when clicking ultra mode from the menu all that is displayed is a blank page. No background, no game play and if I just leave the app running on the blank page it doesn't even display the game over menu which I'd expect if the game was running.
+
+## Make Ultra Mode Like Hard Mode
+I've made a change to the setupUltra mode to make it the same as hard. Why don't you do th same elsewhere in the game, lets just make ultra work exactly like Hard and then we can go from there.

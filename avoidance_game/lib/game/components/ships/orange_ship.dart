@@ -28,9 +28,9 @@ class OrangeShip extends PositionComponent with CollisionCallbacks {
     // Add collision detection
     add(RectangleHitbox());
     
-    // Add shields if in Medium or Hard mode
+    // Add shields if in Medium, Hard, or Ultra mode
     final game = findParent<AvoidanceGame>();
-    if (game != null && (game.difficulty == Difficulty.medium || game.difficulty == Difficulty.hard)) {
+    if (game != null && (game.difficulty == Difficulty.medium || game.difficulty == Difficulty.hard || game.difficulty == Difficulty.ultra)) {
       // Top shield (protects from blue waves)
       topShield = Shield(
         shieldPosition: ShieldPosition.top,

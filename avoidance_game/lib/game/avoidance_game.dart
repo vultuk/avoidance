@@ -5,12 +5,9 @@ import 'package:flutter/material.dart';
 import '../utils/constants.dart';
 import 'components/ships/blue_ship.dart';
 import 'components/ships/orange_ship.dart';
-import 'components/astronaut.dart';
-import 'components/oxygen_bar.dart';
 import 'components/shield.dart';
 import 'managers/wave_manager.dart';
 import 'managers/score_manager.dart';
-import 'managers/gyroscope_manager.dart';
 import 'managers/screen_effects_manager.dart';
 import 'screens/game_over_screen.dart';
 import 'package:flame/camera.dart';
@@ -22,9 +19,6 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
   late ScreenEffectsManager screenEffectsManager;
   late BlueShip blueShip;
   OrangeShip? orangeShip;
-  Astronaut? astronaut;
-  OxygenBar? oxygenBar;
-  GyroscopeManager? gyroscopeManager;
   bool isGameOver = false;
   bool isPaused = false;
   
@@ -49,11 +43,6 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
 
     // Add star field background
     add(StarFieldComponent(gameSize: size));
-    
-    // Add debug output for Ultra mode
-    if (difficulty == Difficulty.ultra) {
-      print('Ultra mode loading - size: $size');
-    }
 
     // Initialize managers
     scoreManager = ScoreManager(difficulty: difficulty);
@@ -129,38 +118,18 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
   }
 
   void _setupUltraMode() {
-    // Add astronaut
-    astronaut = Astronaut(
-      position: Vector2(size.x / 2, size.y / 2),
+    // Add both ships
+    blueShip = BlueShip(
+      position: Vector2(size.x / 2, size.y - 120), // Increased offset for larger ship
+      gameSize: size,
     );
-    add(astronaut!);
+    add(blueShip);
     
-    // Add oxygen bar
-    oxygenBar = OxygenBar(
-      position: Vector2(size.x / 2 - 100, size.y - 50),
+    orangeShip = OrangeShip(
+      position: Vector2(120, size.y / 2), // Increased offset for larger ship
+      gameSize: size,
     );
-    add(oxygenBar!);
-    
-    // Add a debug indicator to confirm Ultra mode is loading
-    add(TextComponent(
-      text: 'ULTRA MODE',
-      position: Vector2(size.x / 2, 100),
-      anchor: Anchor.center,
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          color: Colors.purple,
-          fontSize: 30,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    ));
-    
-    // Initialize gyroscope manager
-    gyroscopeManager = GyroscopeManager();
-    gyroscopeManager!.onGyroscopeUpdate = (x, y) {
-      astronaut?.updateTargetVelocity(x, y);
-    };
-    gyroscopeManager!.startListening();
+    add(orangeShip!);
   }
 
   void _addHUD() {
@@ -253,20 +222,12 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
     );
     scoreText.text = 'Score: ${scoreManager.currentScore}';
     
-    // Update oxygen in Ultra mode
-    if (difficulty == Difficulty.ultra && oxygenBar != null) {
-      oxygenBar!.depleteOxygen(dt);
-      
-      // Check for oxygen depletion
-      if (oxygenBar!.isOxygenDepleted()) {
-        gameOver();
-      }
-    }
+    // Removed Ultra mode specific oxygen logic - Ultra now works like Hard
   }
   
   @override
   void onRemove() {
-    gyroscopeManager?.dispose();
+    // Removed gyroscope disposal - Ultra mode no longer uses it
     super.onRemove();
   }
   
@@ -285,25 +246,13 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
         }
       }
     }
-    // Handle Medium and Hard modes (dual ships)
-    else if (difficulty == Difficulty.medium || difficulty == Difficulty.hard) {
+    // Handle Medium, Hard, and Ultra modes (dual ships)
+    else if (difficulty == Difficulty.medium || difficulty == Difficulty.hard || difficulty == Difficulty.ultra) {
       final touchPoint = info.eventPosition.global;
       final components = componentsAtPoint(touchPoint);
       
       for (final component in components) {
         if (component is BlueShip || component is OrangeShip) {
-          _draggingComponents[pointerId] = component;
-          return true;
-        }
-      }
-    }
-    // Handle Ultra mode (astronaut)
-    else if (difficulty == Difficulty.ultra) {
-      final touchPoint = info.eventPosition.global;
-      final components = componentsAtPoint(touchPoint);
-      
-      for (final component in components) {
-        if (component is Astronaut) {
           _draggingComponents[pointerId] = component;
           return true;
         }
@@ -330,18 +279,6 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
         );
       } else if (component is OrangeShip) {
         // Update orange ship position (both X and Y)
-        component.position.x += info.delta.global.x;
-        component.position.y += info.delta.global.y;
-        component.position.x = component.position.x.clamp(
-          component.size.x / 2,
-          size.x - component.size.x / 2,
-        );
-        component.position.y = component.position.y.clamp(
-          component.size.y / 2,
-          size.y - component.size.y / 2,
-        );
-      } else if (component is Astronaut) {
-        // Update astronaut position (both X and Y)
         component.position.x += info.delta.global.x;
         component.position.y += info.delta.global.y;
         component.position.x = component.position.x.clamp(
