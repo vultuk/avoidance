@@ -3,6 +3,8 @@ import 'package:flame/events.dart';
 import 'package:flame/collisions.dart';
 import 'package:flutter/material.dart';
 import '../../../utils/constants.dart';
+import '../particle_wave.dart';
+import '../../avoidance_game.dart';
 
 class BlueShip extends PositionComponent with DragCallbacks, CollisionCallbacks {
   final Vector2 gameSize;
@@ -78,12 +80,10 @@ class BlueShip extends PositionComponent with DragCallbacks, CollisionCallbacks 
     super.onCollisionStart(intersectionPoints, other);
     
     // Check if collision is with a particle wave
-    if (other.runtimeType.toString().contains('ParticleWave')) {
+    if (other is ParticleWave) {
       // Trigger game over
-      final game = findParent<HasGameRef>();
-      if (game != null) {
-        (game as dynamic).gameOver();
-      }
+      final game = findParent<AvoidanceGame>();
+      game?.gameOver();
     }
   }
 }

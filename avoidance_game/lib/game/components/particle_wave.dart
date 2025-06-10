@@ -6,7 +6,7 @@ import '../../utils/constants.dart';
 
 enum WaveDirection { fromTop, fromLeft }
 
-class ParticleWave extends PositionComponent {
+class ParticleWave extends PositionComponent with CollisionCallbacks {
   final Color color;
   final WaveDirection direction;
   final double speed;

@@ -13,6 +13,7 @@ class WaveManager extends Component with HasGameRef<AvoidanceGame> {
   double _currentWaveSpeed = GameConstants.baseWaveSpeed;
   int _waveCount = 0;
   int _wavesSinceLastPowerUp = 0;
+  ParticleWave? _currentWave;
   
   WaveManager({
     required this.gameSize,
@@ -23,6 +24,18 @@ class WaveManager extends Component with HasGameRef<AvoidanceGame> {
   @override
   void update(double dt) {
     if (gameRef.isGameOver || gameRef.isPaused) return;
+    
+    // Check if current wave is still on screen
+    if (_currentWave != null && _currentWave!.isMounted) {
+      // For Easy mode, check if wave has moved off screen
+      if (difficulty == Difficulty.easy) {
+        if (_currentWave!.position.y > gameSize.y) {
+          _currentWave = null;
+        }
+      }
+      // Don't spawn new wave if current wave is still active
+      return;
+    }
     
     _timeSinceLastWave += dt;
     
@@ -87,6 +100,7 @@ class WaveManager extends Component with HasGameRef<AvoidanceGame> {
       gameSize: gameSize,
     );
     
+    _currentWave = wave;
     gameRef.add(wave);
   }
 
@@ -106,6 +120,7 @@ class WaveManager extends Component with HasGameRef<AvoidanceGame> {
       gameSize: gameSize,
     );
     
+    _currentWave = wave;
     gameRef.add(wave);
   }
 
