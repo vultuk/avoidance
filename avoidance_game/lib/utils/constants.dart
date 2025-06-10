@@ -62,7 +62,7 @@ class GameConstants {
   
   // Oxygen system (Ultra mode)
   static const double maxOxygen = 100.0;
-  static const double oxygenDepletionRate = 1.0; // units per second
+  static const double oxygenDepletionRate = 2.0; // 2% per second
   static const double oxygenWarningThreshold = 20.0;
   
   // Astronaut movement (Ultra mode)

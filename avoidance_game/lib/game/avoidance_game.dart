@@ -6,6 +6,7 @@ import '../utils/constants.dart';
 import 'components/ships/blue_ship.dart';
 import 'components/ships/orange_ship.dart';
 import 'components/astronaut.dart';
+import 'components/oxygen_bar.dart';
 import 'components/shield.dart';
 import 'managers/wave_manager.dart';
 import 'managers/score_manager.dart';
@@ -22,6 +23,7 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
   late BlueShip blueShip;
   OrangeShip? orangeShip;
   Astronaut? astronaut;
+  OxygenBar? oxygenBar;
   GyroscopeManager? gyroscopeManager;
   bool isGameOver = false;
   bool isPaused = false;
@@ -135,11 +137,17 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
     );
     add(orangeShip!);
     
-    // Add astronaut as an extra element (no game mechanics)
+    // Add astronaut as an extra element
     astronaut = Astronaut(
       position: Vector2(size.x / 2, size.y / 2),
     );
     add(astronaut!);
+    
+    // Add oxygen bar in HUD
+    oxygenBar = OxygenBar(
+      position: Vector2(size.x / 2, 70), // Position below score
+    );
+    add(oxygenBar!);
     
     // Initialize gyroscope for astronaut control
     gyroscopeManager = GyroscopeManager();
@@ -239,7 +247,15 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
     );
     scoreText.text = 'Score: ${scoreManager.currentScore}';
     
-    // Removed Ultra mode specific oxygen logic - Ultra now works like Hard
+    // Update oxygen in Ultra mode
+    if (difficulty == Difficulty.ultra && oxygenBar != null) {
+      oxygenBar!.depleteOxygen(dt);
+      
+      // Check for oxygen depletion
+      if (oxygenBar!.isOxygenDepleted()) {
+        gameOver();
+      }
+    }
   }
   
   @override
