@@ -12,6 +12,7 @@ class Shield extends PositionComponent with CollisionCallbacks {
   final Color baseColor; // Color of the wave it protects from
   int health = 3;
   final int maxHealth = 3;
+  Function(ParticleWave)? onWaveHit; // Callback for when shield is hit by wave
   
   Shield({
     required this.shieldPosition,
@@ -143,7 +144,10 @@ class Shield extends PositionComponent with CollisionCallbacks {
       
       // Only take damage and trigger effects in Hard and Ultra modes
       if (game?.difficulty == Difficulty.hard || game?.difficulty == Difficulty.ultra) {
-        takeDamage();
+        // Notify the shield system about the wave hit
+        if (onWaveHit != null) {
+          onWaveHit!(other);
+        }
         
         // Trigger screen effects for shield hit
         game?.screenEffectsManager.triggerShieldHit();

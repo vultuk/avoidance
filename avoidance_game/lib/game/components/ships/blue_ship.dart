@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 import '../../../utils/constants.dart';
 import '../particle_wave.dart';
 import '../shield.dart';
+import '../shield_system.dart';
 import '../../avoidance_game.dart';
 
 class BlueShip extends PositionComponent with CollisionCallbacks {
   final Vector2 gameSize;
   Shield? leftShield;
   Shield? rightShield;
+  ShieldSystem? shieldSystem;
   
   BlueShip({
     required Vector2 position,
@@ -52,6 +54,16 @@ class BlueShip extends PositionComponent with CollisionCallbacks {
       final rightShieldX = (GameSizes.shipSize/2) + 8 + (GameSizes.shieldWidth/2);
       rightShield!.position = Vector2(rightShieldX, 0);
       add(rightShield!);
+      
+      // Create shield system linking both shields
+      shieldSystem = ShieldSystem(
+        shields: [leftShield!, rightShield!],
+        waveColor: GameColors.orange,
+      );
+      
+      // Set up callbacks for wave hits
+      leftShield!.onWaveHit = (wave) => shieldSystem!.takeDamageFromWave(wave);
+      rightShield!.onWaveHit = (wave) => shieldSystem!.takeDamageFromWave(wave);
     }
   }
 
@@ -90,6 +102,13 @@ class BlueShip extends PositionComponent with CollisionCallbacks {
   }
 
   // Drag handling is now managed by AvoidanceGame's multi-touch system for all modes
+  
+  @override
+  void update(double dt) {
+    super.update(dt);
+    // Clean up processed waves periodically
+    shieldSystem?.clearProcessedWaves();
+  }
 
   @override
   void onCollisionStart(

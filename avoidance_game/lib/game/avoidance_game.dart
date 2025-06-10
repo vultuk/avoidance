@@ -204,33 +204,19 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
   }
   
   bool areAllShieldsDestroyed() {
-    if (difficulty != Difficulty.hard) return false;
+    if (difficulty != Difficulty.hard && difficulty != Difficulty.ultra) return false;
     
-    // Check blue ship shields
-    bool blueShieldsDestroyed = true;
-    if (blueShip.leftShield != null && !blueShip.leftShield!.isDestroyed) {
-      blueShieldsDestroyed = false;
-    }
-    if (blueShip.rightShield != null && !blueShip.rightShield!.isDestroyed) {
-      blueShieldsDestroyed = false;
-    }
+    // Check blue ship shield system
+    bool blueShieldsDestroyed = blueShip.shieldSystem?.isDestroyed ?? true;
     
-    // Check orange ship shields
-    bool orangeShieldsDestroyed = true;
-    if (orangeShip != null) {
-      if (orangeShip!.topShield != null && !orangeShip!.topShield!.isDestroyed) {
-        orangeShieldsDestroyed = false;
-      }
-      if (orangeShip!.bottomShield != null && !orangeShip!.bottomShield!.isDestroyed) {
-        orangeShieldsDestroyed = false;
-      }
-    }
+    // Check orange ship shield system
+    bool orangeShieldsDestroyed = orangeShip?.shieldSystem?.isDestroyed ?? true;
     
     return blueShieldsDestroyed && orangeShieldsDestroyed;
   }
   
   void checkShieldGameOver() {
-    if (difficulty == Difficulty.hard && areAllShieldsDestroyed()) {
+    if ((difficulty == Difficulty.hard || difficulty == Difficulty.ultra) && areAllShieldsDestroyed()) {
       gameOver();
     }
   }
