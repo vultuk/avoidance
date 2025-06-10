@@ -1,8 +1,9 @@
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 import '../../utils/constants.dart';
 
-class Astronaut extends PositionComponent {
+class Astronaut extends PositionComponent with DragCallbacks {
   static const double maxSpeed = 600.0; // pixels per second - increased for faster movement
   static const double friction = 0.95; // momentum friction - increased for more drifting
   static const double accelerationRate = 50.0; // acceleration multiplier for gyroscope input - increased for stronger thrust
@@ -129,5 +130,24 @@ class Astronaut extends PositionComponent {
            position.x > gameSize.x + size.x/2 ||
            position.y < -size.y/2 || 
            position.y > gameSize.y + size.y/2;
+  }
+  
+  // Fallback drag controls for testing when gyroscope isn't available
+  @override
+  bool onDragUpdate(DragUpdateInfo info) {
+    // Use drag as a simple directional input
+    final dragDelta = info.delta.global;
+    final normalizedX = (dragDelta.x / 50).clamp(-1.0, 1.0);
+    final normalizedY = (dragDelta.y / 50).clamp(-1.0, 1.0);
+    
+    updateTargetVelocity(normalizedX, normalizedY);
+    return true;
+  }
+  
+  @override
+  bool onDragEnd(DragEndInfo info) {
+    // Stop acceleration when drag ends
+    updateTargetVelocity(0, 0);
+    return true;
   }
 }
