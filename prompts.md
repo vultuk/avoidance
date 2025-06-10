@@ -78,3 +78,13 @@ Error: Resource not accessible by integration
 
 ## Prompts File Reminder
 Don't forget to also add all prompts to @prompts.md
+
+## Quick Tasks Request
+Please have a look through @todo.md and see if there's a few quick tasks to do from either low priority or Anything from Phase 3 or less that has been missed.
+
+## GitHub Actions Error Report
+Build APK Action : 3m 54s
+[Error message about gyroscopeEventStream not being defined]
+
+## Create New Version Request
+We also need to create a new version please

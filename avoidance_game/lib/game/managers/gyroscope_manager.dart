@@ -16,7 +16,7 @@ class GyroscopeManager {
   static const double deadZone = GameConstants.gyroscopeDeadZone * (math.pi / 180);
   
   void startListening() {
-    _gyroscopeSubscription = gyroscopeEventStream().listen((GyroscopeEvent event) {
+    _gyroscopeSubscription = gyroscopeEvents.listen((GyroscopeEvent event) {
       if (!_isCalibrated) {
         // Use first reading as calibration baseline
         _calibrationX = event.x;

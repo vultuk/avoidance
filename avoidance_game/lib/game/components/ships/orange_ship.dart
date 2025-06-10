@@ -7,9 +7,8 @@ import '../particle_wave.dart';
 import '../shield.dart';
 import '../../avoidance_game.dart';
 
-class OrangeShip extends PositionComponent with DragCallbacks, CollisionCallbacks {
+class OrangeShip extends PositionComponent with CollisionCallbacks {
   final Vector2 gameSize;
-  bool isDragging = false;
   Shield? topShield;
   Shield? bottomShield;
   
@@ -84,31 +83,7 @@ class OrangeShip extends PositionComponent with DragCallbacks, CollisionCallback
     canvas.drawPath(path, paint);
   }
 
-  @override
-  bool onDragStart(DragStartEvent event) {
-    isDragging = true;
-    return true;
-  }
-
-  @override
-  bool onDragUpdate(DragUpdateEvent event) {
-    if (isDragging) {
-      // Update position based on drag
-      position.add(event.localDelta);
-      
-      // Keep ship within screen bounds
-      position.x = position.x.clamp(size.x / 2, gameSize.x - size.x / 2);
-      position.y = position.y.clamp(size.y / 2, gameSize.y - size.y / 2);
-    }
-    
-    return true;
-  }
-
-  @override
-  bool onDragEnd(DragEndEvent event) {
-    isDragging = false;
-    return true;
-  }
+  // Drag handling removed - now handled by AvoidanceGame's multi-touch system
 
   @override
   void onCollisionStart(

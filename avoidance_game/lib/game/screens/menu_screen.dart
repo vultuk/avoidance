@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../utils/constants.dart';
 import 'game_screen.dart';
+import 'leaderboard_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -154,17 +155,22 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _MenuButton(
-                      text: 'HIGH SCORES',
+                      text: 'LEADERBOARD',
                       color: GameColors.uiText,
-                      onPressed: _showHighScores,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LeaderboardScreen(),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(width: 20),
                     _MenuButton(
-                      text: 'SHARE',
+                      text: 'HIGH SCORES',
                       color: GameColors.uiText,
-                      onPressed: () {
-                        // TODO: Implement share functionality
-                      },
+                      onPressed: _showHighScores,
                     ),
                   ],
                 ),

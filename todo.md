@@ -35,13 +35,13 @@
 
 ### Medium Priority - Medium Mode
 - [x] Implement orange_ship.dart component (rotated 90°)
-- [ ] Add multi-touch support for controlling both ships simultaneously
+- [x] Add multi-touch support for controlling both ships simultaneously
 - [x] Modify wave_manager.dart to spawn orange waves from left
 - [x] Create shield sprites (15x30px curved barriers) for visual indicators
 
 ### Medium Priority - Hard Mode
 - [x] Implement shield system with 3 HP and visual degradation
-- [ ] Add screen shake and flash effects for shield hits
+- [x] Add screen shake and flash effects for shield hits
 - [x] Create power_up.dart component with pulsing green glow effect
 - [x] Implement power-up spawning logic (after every 4th wave)
 - [x] Add power-up collection mechanics (restore shields to 100%)
@@ -64,7 +64,7 @@
 - [ ] Add sound effects (wave warning, shield hit, power-up, destruction, oxygen warning)
 
 ### Low Priority - Social Features
-- [ ] Implement personal leaderboard (top 10 scores per difficulty)
+- [x] Implement personal leaderboard (top 10 scores per difficulty)
 - [ ] Add social sharing functionality with screenshot and pre-filled text
 
 ## Final Polish & Release

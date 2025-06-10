@@ -85,14 +85,22 @@ class BlueShip extends PositionComponent with DragCallbacks, CollisionCallbacks 
 
   @override
   bool onDragUpdate(DragUpdateEvent event) {
-    // Update position based on drag
-    position.add(event.localDelta);
+    final game = findParent<AvoidanceGame>();
     
-    // Keep ship within screen bounds
-    position.x = position.x.clamp(size.x / 2, gameSize.x - size.x / 2);
-    position.y = position.y.clamp(size.y / 2, gameSize.y - size.y / 2);
+    // In Easy mode, handle drag normally
+    // In Medium/Hard modes, this is handled by multi-touch in AvoidanceGame
+    if (game?.difficulty == Difficulty.easy) {
+      // Update position based on drag
+      position.add(event.localDelta);
+      
+      // Keep ship within screen bounds
+      position.x = position.x.clamp(size.x / 2, gameSize.x - size.x / 2);
+      position.y = position.y.clamp(size.y / 2, gameSize.y - size.y / 2);
+      
+      return true;
+    }
     
-    return true;
+    return false;
   }
 
   @override

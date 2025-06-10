@@ -11,13 +11,15 @@ import 'components/shield.dart';
 import 'managers/wave_manager.dart';
 import 'managers/score_manager.dart';
 import 'managers/gyroscope_manager.dart';
+import 'managers/screen_effects_manager.dart';
 import 'screens/game_over_screen.dart';
 import 'package:flame/camera.dart';
 
-class AvoidanceGame extends FlameGame with DragCallbacks, HasCollisionDetection {
+class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionDetection {
   final Difficulty difficulty;
   late ScoreManager scoreManager;
   late WaveManager waveManager;
+  late ScreenEffectsManager screenEffectsManager;
   late BlueShip blueShip;
   OrangeShip? orangeShip;
   Astronaut? astronaut;
@@ -25,6 +27,9 @@ class AvoidanceGame extends FlameGame with DragCallbacks, HasCollisionDetection 
   GyroscopeManager? gyroscopeManager;
   bool isGameOver = false;
   bool isPaused = false;
+  
+  // Track active drags for multi-touch support
+  final Map<int, Component> _draggingComponents = {};
 
   AvoidanceGame({required this.difficulty});
 
@@ -55,6 +60,9 @@ class AvoidanceGame extends FlameGame with DragCallbacks, HasCollisionDetection 
       shipWidth: GameSizes.shipSize,
     );
     add(waveManager);
+    
+    screenEffectsManager = ScreenEffectsManager();
+    add(screenEffectsManager);
 
     // Add ships based on difficulty
     switch (difficulty) {
@@ -241,6 +249,60 @@ class AvoidanceGame extends FlameGame with DragCallbacks, HasCollisionDetection 
   void onRemove() {
     gyroscopeManager?.dispose();
     super.onRemove();
+  }
+  
+  // Multi-touch support for Medium and Hard modes
+  @override
+  bool onDragStart(int pointerId, DragStartInfo info) {
+    if (difficulty == Difficulty.medium || difficulty == Difficulty.hard) {
+      // Find which ship was touched
+      final touchPoint = info.eventPosition.global;
+      final components = componentsAtPoint(touchPoint);
+      
+      for (final component in components) {
+        if (component is BlueShip || component is OrangeShip) {
+          _draggingComponents[pointerId] = component;
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+  
+  @override
+  bool onDragUpdate(int pointerId, DragUpdateInfo info) {
+    final component = _draggingComponents[pointerId];
+    if (component != null) {
+      if (component is BlueShip) {
+        // Update blue ship position (vertical movement)
+        component.position.x += info.delta.global.x;
+        component.position.x = component.position.x.clamp(
+          component.size.x / 2,
+          size.x - component.size.x / 2,
+        );
+      } else if (component is OrangeShip) {
+        // Update orange ship position (horizontal movement)
+        component.position.y += info.delta.global.y;
+        component.position.y = component.position.y.clamp(
+          component.size.y / 2,
+          size.y - component.size.y / 2,
+        );
+      }
+      return true;
+    }
+    return false;
+  }
+  
+  @override
+  bool onDragEnd(int pointerId, DragEndInfo info) {
+    _draggingComponents.remove(pointerId);
+    return true;
+  }
+  
+  @override
+  bool onDragCancel(int pointerId) {
+    _draggingComponents.remove(pointerId);
+    return true;
   }
 }
 

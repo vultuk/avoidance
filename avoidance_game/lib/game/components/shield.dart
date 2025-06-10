@@ -141,8 +141,11 @@ class Shield extends PositionComponent with CollisionCallbacks {
     if (other is ParticleWave && other.color == baseColor && !isDestroyed) {
       takeDamage();
       
-      // Check if all shields are destroyed for game over
+      // Trigger screen effects for shield hit
       final game = findParent<AvoidanceGame>();
+      game?.screenEffectsManager.triggerShieldHit();
+      
+      // Check if all shields are destroyed for game over
       game?.checkShieldGameOver();
       
       // The wave continues past the shield, so we don't remove it
