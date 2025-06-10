@@ -1,0 +1,53 @@
+# Flutter SDK
+flutter_sdk/
+
+# Flutter project build directories
+avoidance_game/.dart_tool/
+avoidance_game/build/
+avoidance_game/.flutter-plugins
+avoidance_game/.flutter-plugins-dependencies
+avoidance_game/.pub-cache/
+avoidance_game/.pub/
+
+# Android related
+avoidance_game/android/.gradle/
+avoidance_game/android/captures/
+avoidance_game/android/gradlew
+avoidance_game/android/gradlew.bat
+avoidance_game/android/local.properties
+avoidance_game/android/app/release/
+
+# iOS/Xcode related
+avoidance_game/ios/**/*.mode1v3
+avoidance_game/ios/**/*.mode2v3
+avoidance_game/ios/**/*.moved-aside
+avoidance_game/ios/**/*.pbxuser
+avoidance_game/ios/**/*.perspectivev3
+avoidance_game/ios/**/*sync/
+avoidance_game/ios/**/.sconsign.dblite
+avoidance_game/ios/**/.tags*
+avoidance_game/ios/**/.vagrant/
+avoidance_game/ios/**/DerivedData/
+avoidance_game/ios/**/Icon?
+avoidance_game/ios/**/Pods/
+avoidance_game/ios/**/.symlinks/
+avoidance_game/ios/**/profile
+avoidance_game/ios/**/xcuserdata
+avoidance_game/ios/.generated/
+avoidance_game/ios/Flutter/App.framework
+avoidance_game/ios/Flutter/Flutter.framework
+avoidance_game/ios/Flutter/Flutter.podspec
+avoidance_game/ios/Flutter/Generated.xcconfig
+avoidance_game/ios/Flutter/ephemeral/
+avoidance_game/ios/Flutter/app.flx
+avoidance_game/ios/Flutter/app.zip
+avoidance_game/ios/Flutter/flutter_assets/
+avoidance_game/ios/Flutter/flutter_export_environment.sh
+avoidance_game/ios/ServiceDefinitions.json
+avoidance_game/ios/Runner/GeneratedPluginRegistrant.*
+
+# Exceptions to above rules.
+!avoidance_game/ios/**/default.mode1v3
+!avoidance_game/ios/**/default.mode2v3
+!avoidance_game/ios/**/default.pbxuser
+!avoidance_game/ios/**/default.perspectivev3
