@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import '../../utils/constants.dart';
 
 class Astronaut extends PositionComponent {
-  static const double maxSpeed = 400.0; // pixels per second - increased for faster movement
-  static const double friction = 0.85; // momentum friction
-  static const double accelerationRate = 30.0; // acceleration multiplier for gyroscope input - doubled for quicker response
+  static const double maxSpeed = 600.0; // pixels per second - increased for faster movement
+  static const double friction = 0.95; // momentum friction - increased for more drifting
+  static const double accelerationRate = 50.0; // acceleration multiplier for gyroscope input - increased for stronger thrust
   
   late RectangleComponent body;
   late RectangleComponent helmet;
@@ -99,21 +99,25 @@ class Astronaut extends PositionComponent {
 
   void updateTargetVelocity(double x, double y) {
     // x and y are gyroscope values typically between -1 and 1
-    // Apply acceleration rate and clamp to max speed
-    targetVelocity = Vector2(x, y) * accelerationRate;
-    
-    // Clamp to max speed
-    if (targetVelocity.length > maxSpeed) {
-      targetVelocity = targetVelocity.normalized() * maxSpeed;
-    }
+    // Apply acceleration to existing velocity for momentum-based movement
+    Vector2 acceleration = Vector2(x, y) * accelerationRate;
+    targetVelocity = acceleration;
   }
 
   @override
   void update(double dt) {
     super.update(dt);
     
-    // Apply momentum-based movement
-    velocity = velocity * friction + targetVelocity * (1 - friction);
+    // Add acceleration to velocity for true drifting
+    velocity += targetVelocity * dt;
+    
+    // Apply friction
+    velocity *= friction;
+    
+    // Clamp to max speed
+    if (velocity.length > maxSpeed) {
+      velocity = velocity.normalized() * maxSpeed;
+    }
     
     // Update position
     position += velocity * dt;
