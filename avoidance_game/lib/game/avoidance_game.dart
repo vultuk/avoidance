@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import '../utils/constants.dart';
 import 'components/ships/blue_ship.dart';
 import 'components/ships/orange_ship.dart';
+import 'components/astronaut.dart';
+import 'components/oxygen_bar.dart';
 import 'components/shield.dart';
 import 'managers/wave_manager.dart';
 import 'managers/score_manager.dart';
+import 'managers/gyroscope_manager.dart';
 import 'screens/game_over_screen.dart';
 import 'package:flame/camera.dart';
 
@@ -17,6 +20,9 @@ class AvoidanceGame extends FlameGame with DragCallbacks, HasCollisionDetection 
   late WaveManager waveManager;
   late BlueShip blueShip;
   OrangeShip? orangeShip;
+  Astronaut? astronaut;
+  OxygenBar? oxygenBar;
+  GyroscopeManager? gyroscopeManager;
   bool isGameOver = false;
   bool isPaused = false;
 
@@ -110,8 +116,24 @@ class AvoidanceGame extends FlameGame with DragCallbacks, HasCollisionDetection 
   }
 
   void _setupUltraMode() {
-    // TODO: Implement ultra mode with astronaut
-    _setupEasyMode(); // For now, just use easy mode
+    // Add astronaut
+    astronaut = Astronaut(
+      position: Vector2(size.x / 2, size.y / 2),
+    );
+    add(astronaut!);
+    
+    // Add oxygen bar
+    oxygenBar = OxygenBar(
+      position: Vector2(size.x / 2 - 100, size.y - 50),
+    );
+    add(oxygenBar!);
+    
+    // Initialize gyroscope manager
+    gyroscopeManager = GyroscopeManager();
+    gyroscopeManager!.onGyroscopeUpdate = (x, y) {
+      astronaut?.updateTargetVelocity(x, y);
+    };
+    gyroscopeManager!.startListening();
   }
 
   void _addHUD() {
@@ -203,6 +225,22 @@ class AvoidanceGame extends FlameGame with DragCallbacks, HasCollisionDetection 
       orElse: () => TextComponent(text: 'Score: 0'),
     );
     scoreText.text = 'Score: ${scoreManager.currentScore}';
+    
+    // Update oxygen in Ultra mode
+    if (difficulty == Difficulty.ultra && oxygenBar != null) {
+      oxygenBar!.depleteOxygen(dt);
+      
+      // Check for oxygen depletion
+      if (oxygenBar!.isOxygenDepleted()) {
+        gameOver();
+      }
+    }
+  }
+  
+  @override
+  void onRemove() {
+    gyroscopeManager?.dispose();
+    super.onRemove();
   }
 }
 

@@ -86,39 +86,33 @@ jobs:
       run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
       
     - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ steps.get_version.outputs.VERSION }}
-        release_name: Avoidance Game ${{ steps.get_version.outputs.VERSION }}
-        body: |
-          # Avoidance Game ${{ steps.get_version.outputs.VERSION }}
-          
-          ## 📱 Installation
-          1. Download the APK file: `avoidance-game-${{ steps.get_version.outputs.VERSION }}.apk`
-          2. Enable "Install from Unknown Sources" in your Android settings
-          3. Open the APK file to install
-          4. Launch "Avoidance" from your app drawer
-          
-          ## 🎮 Game Modes
-          - **Easy**: Single blue ship avoiding blue waves
-          - **Medium**: Dual ship control (blue and orange)
-          - **Hard**: Dual ships with shield system and power-ups
-          - **Ultra**: (Coming soon)
-          
-          ## 📝 Changelog
-          See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.
-        draft: false
-        prerelease: false
+      run: |
+        VERSION=${{ steps.get_version.outputs.VERSION }}
         
-    - name: Upload Release APK
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./app-release.apk
-        asset_name: avoidance-game-${{ steps.get_version.outputs.VERSION }}.apk
-        asset_content_type: application/vnd.android.package-archive
+        # Create release notes
+        cat << EOF > release_notes.md
+        # Avoidance Game ${VERSION}
+        
+        ## 📱 Installation
+        1. Download the APK file: \`avoidance-game-${VERSION}.apk\`
+        2. Enable "Install from Unknown Sources" in your Android settings
+        3. Open the APK file to install
+        4. Launch "Avoidance" from your app drawer
+        
+        ## 🎮 Game Modes
+        - **Easy**: Single blue ship avoiding blue waves
+        - **Medium**: Dual ship control (blue and orange)
+        - **Hard**: Dual ships with shield system and power-ups
+        - **Ultra**: Astronaut with gyroscope controls and oxygen system
+        
+        ## 📝 Changelog
+        See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.
+        EOF
+        
+        # Create release using GitHub CLI
+        gh release create ${VERSION} \
+          --title "Avoidance Game ${VERSION}" \
+          --notes-file release_notes.md \
+          ./app-release.apk#avoidance-game-${VERSION}.apk

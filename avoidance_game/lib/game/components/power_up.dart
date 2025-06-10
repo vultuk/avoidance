@@ -6,6 +6,7 @@ import '../../utils/constants.dart';
 import '../avoidance_game.dart';
 import 'ships/blue_ship.dart';
 import 'ships/orange_ship.dart';
+import 'astronaut.dart';
 
 class PowerUp extends PositionComponent with CollisionCallbacks {
   final Vector2 gameSize;
@@ -131,6 +132,15 @@ class PowerUp extends PositionComponent with CollisionCallbacks {
       if (game?.blueShip != null) {
         if (game!.blueShip.leftShield != null) game.blueShip.leftShield!.restore();
         if (game.blueShip.rightShield != null) game.blueShip.rightShield!.restore();
+      }
+      
+      // Remove power-up
+      removeFromParent();
+    } else if (other is Astronaut) {
+      // In Ultra mode, power-ups refill oxygen
+      final game = findParent<AvoidanceGame>();
+      if (game?.difficulty == Difficulty.ultra && game?.oxygenBar != null) {
+        game!.oxygenBar!.refillOxygen();
       }
       
       // Remove power-up

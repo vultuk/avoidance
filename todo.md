@@ -52,12 +52,12 @@
 ## Phase 3: Advanced Features (Ultra Mode & Polish)
 
 ### Low Priority - Ultra Mode
-- [ ] Create astronaut.dart component (25x25px humanoid sprite)
-- [ ] Implement gyroscope controls with calibration and dead zone
-- [ ] Add momentum-based movement for astronaut (max 200px/s)
-- [ ] Implement oxygen system with depletion and UI bar
-- [ ] Add screen edge collision detection for astronaut
-- [ ] Implement power-up priority system for Ultra mode
+- [x] Create astronaut.dart component (25x25px humanoid sprite)
+- [x] Implement gyroscope controls with calibration and dead zone
+- [x] Add momentum-based movement for astronaut (max 200px/s)
+- [x] Implement oxygen system with depletion and UI bar
+- [x] Add screen edge collision detection for astronaut
+- [x] Implement power-up priority system for Ultra mode
 
 ### Low Priority - Audio
 - [ ] Create ambient space music (loopable background track)

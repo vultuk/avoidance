@@ -62,3 +62,19 @@ Can you build a new release please. I don't think the one you just released was 
 
 ## GitHub Actions Build Request
 Can you build a github action that will automatically build the apk and create a github release?
+
+## Version Tag Push Request
+Can we push a version tag then please so we get a new version built.
+
+## GitHub Actions Caching Request
+Can we make sure there is some good caching in the github actions so everything runs nice and quickly.
+
+## Phase 3 Development Request
+While we are waiting to test the latest version. Lets knock out the Phase 3 from the @todo.md. Don't forget to keep the todo list updated. Once you've finished, commit and push to git
+
+## GitHub Actions Fix Note
+In the actions file, the Create Release step from 'Build and Release APK' isn't working. This is the message - Run actions/create-release@v1
+Error: Resource not accessible by integration
+
+## Prompts File Reminder
+Don't forget to also add all prompts to @prompts.md
