@@ -150,3 +150,38 @@ I've made a change to the setupUltra mode to make it the same as hard. Why don't
 
 ## Add Astronaut Back to Ultra Mode
 Ok. So ultra mode is working in this cut down version. Lets add in the astronaut with just gyroscope controls. No game over if it goes off screen, no oxygen, just a floating astronaut
+
+## Add Oxygen System to Ultra Mode
+Ok. The astronaut is in there ant working fine. Lets now add an oxygen guage in the HUD so the user can see how much oxygen it has left. Oxygen should deplete by 2% every second. If the oyygen reaches 0 (or less than) then it's game over. Remember this is ultra mode only
+
+## Astronaut Movement Update Request
+The astronaut should be able to be moved on all axis based on the gyroscope. It should also move reasonably quickly across the screen. If the astronaut leaves the boundaries of the screen at any side then it's game over.
+
+## Ultra Mode Oxygen Bar Bug Report
+Ok. 3.2.2 broke Ultra mode, now when clicking Ultra on the menu I get a blank screen. This means it must be an issue with ading the oxygen level to the HUD.
+
+## Astronaut Drifting Request
+Ok. Great we are pretty much working. The astronaut should drift in the direction of the gyroscope and keep drifting that way. It should go faster than it currently is set to.
+
+## Shield System Update Request
+We need to make some changes to the shields.
+
+1. The Shield strength should be linked. So on the blue ship the left and right shields have just one 'power source'. The orange ship the same for top and bottom shields.
+2. The shield should only reduce by one level per particle wave that it hits. This way the shielf can only reduce by 1 level per wave.
+3. 
+
+## Astronaut Not Moving Bug Report
+The astronaut just isn't moving at all. :(
+
+## Real Device Note
+I'm on a real device, not a simulator
+
+## Build Error Report
+Running Gradle task 'assembleRelease'...                        
+[Build error details with Flame 1.29.0 drag event type mismatch]
+
+## Astronaut Still Not Moving
+on my phone, the astronaut is still not moving. Just sits there in the middle of the screen
+
+## Update Files Request
+Please make sure that @prompts.md and @todo.md are fully updated
