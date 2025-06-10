@@ -32,65 +32,68 @@ class Astronaut extends PositionComponent with CollisionCallbacks, HasGameRef<Av
   Future<void> onLoad() async {
     await super.onLoad();
     
-    // Add a debug background to make astronaut visible
+    // Add a bright background to make astronaut visible for debugging
     add(RectangleComponent(
       size: size,
-      paint: Paint()..color = Colors.grey.withOpacity(0.3),
+      paint: Paint()..color = Colors.yellow.withOpacity(0.5),
     ));
+    
+    // Scale components to new astronaut size (40px)
+    final scale = size.x / 25; // Original was 25px
     
     // Main body (torso)
     body = RectangleComponent(
-      size: Vector2(15, 18),
-      position: Vector2(5, 4),
+      size: Vector2(15, 18) * scale,
+      position: Vector2(5, 4) * scale,
       paint: Paint()..color = Colors.white,
     );
     add(body);
     
     // Helmet (circular appearance)
     helmet = RectangleComponent(
-      size: Vector2(12, 10),
-      position: Vector2(6.5, 0),
+      size: Vector2(12, 10) * scale,
+      position: Vector2(6.5, 0) * scale,
       paint: Paint()..color = Colors.white.withOpacity(0.9),
     );
     add(helmet);
     
     // Visor (blue tint)
     visor = RectangleComponent(
-      size: Vector2(8, 6),
-      position: Vector2(8.5, 2),
+      size: Vector2(8, 6) * scale,
+      position: Vector2(8.5, 2) * scale,
       paint: Paint()..color = Colors.lightBlue.withOpacity(0.7),
     );
     add(visor);
     
     // Backpack (life support)
     backpack = RectangleComponent(
-      size: Vector2(5, 10),
-      position: Vector2(20, 7),
+      size: Vector2(5, 10) * scale,
+      position: Vector2(20, 7) * scale,
       paint: Paint()..color = Colors.grey[700]!,
     );
     add(backpack);
     
     // Arms (left and right)
     add(RectangleComponent(
-      size: Vector2(3, 12),
-      position: Vector2(2, 6),
+      size: Vector2(3, 12) * scale,
+      position: Vector2(2, 6) * scale,
       paint: Paint()..color = Colors.white,
     ));
     add(RectangleComponent(
-      size: Vector2(3, 12),
-      position: Vector2(20, 6),
+      size: Vector2(3, 12) * scale,
+      position: Vector2(20, 6) * scale,
       paint: Paint()..color = Colors.white,
     ));
     
     // Legs (left and right)
     add(RectangleComponent(
-      size: Vector2(4, 8),
-      position: Vector2(6, 17),
+      size: Vector2(4, 8) * scale,
+      position: Vector2(6, 17) * scale,
       paint: Paint()..color = Colors.white,
     ));
     add(RectangleComponent(
-      size: Vector2(4, 8),
-      position: Vector2(15, 17),
+      size: Vector2(4, 8) * scale,
+      position: Vector2(15, 17) * scale,
       paint: Paint()..color = Colors.white,
     ));
     

@@ -49,6 +49,11 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
 
     // Add star field background
     add(StarFieldComponent(gameSize: size));
+    
+    // Add debug output for Ultra mode
+    if (difficulty == Difficulty.ultra) {
+      print('Ultra mode loading - size: $size');
+    }
 
     // Initialize managers
     scoreManager = ScoreManager(difficulty: difficulty);
@@ -292,6 +297,18 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
         }
       }
     }
+    // Handle Ultra mode (astronaut)
+    else if (difficulty == Difficulty.ultra) {
+      final touchPoint = info.eventPosition.global;
+      final components = componentsAtPoint(touchPoint);
+      
+      for (final component in components) {
+        if (component is Astronaut) {
+          _draggingComponents[pointerId] = component;
+          return true;
+        }
+      }
+    }
     return false;
   }
   
@@ -313,6 +330,18 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
         );
       } else if (component is OrangeShip) {
         // Update orange ship position (both X and Y)
+        component.position.x += info.delta.global.x;
+        component.position.y += info.delta.global.y;
+        component.position.x = component.position.x.clamp(
+          component.size.x / 2,
+          size.x - component.size.x / 2,
+        );
+        component.position.y = component.position.y.clamp(
+          component.size.y / 2,
+          size.y - component.size.y / 2,
+        );
+      } else if (component is Astronaut) {
+        // Update astronaut position (both X and Y)
         component.position.x += info.delta.global.x;
         component.position.y += info.delta.global.y;
         component.position.x = component.position.x.clamp(

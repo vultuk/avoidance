@@ -16,34 +16,45 @@ class GyroscopeManager {
   static const double deadZone = GameConstants.gyroscopeDeadZone * (math.pi / 180);
   
   void startListening() {
-    _gyroscopeSubscription = gyroscopeEvents.listen((GyroscopeEvent event) {
-      if (!_isCalibrated) {
-        // Use first reading as calibration baseline
-        _calibrationX = event.x;
-        _calibrationY = event.y;
-        _isCalibrated = true;
-        return;
-      }
-      
-      // Apply calibration offset
-      double adjustedX = event.x - _calibrationX;
-      double adjustedY = event.y - _calibrationY;
-      
-      // Apply dead zone
-      if (adjustedX.abs() < deadZone) adjustedX = 0;
-      if (adjustedY.abs() < deadZone) adjustedY = 0;
-      
-      // Normalize to -1 to 1 range (assuming max rotation of 45 degrees)
-      const double maxRotation = math.pi / 4; // 45 degrees in radians
-      adjustedX = (adjustedX / maxRotation).clamp(-1.0, 1.0);
-      adjustedY = (adjustedY / maxRotation).clamp(-1.0, 1.0);
-      
-      // Invert Y-axis for more intuitive control (tilt forward = move up)
-      adjustedY = -adjustedY;
-      
-      // Call the update callback
-      onGyroscopeUpdate?.call(adjustedX, adjustedY);
-    });
+    try {
+      _gyroscopeSubscription = gyroscopeEvents.listen(
+        (GyroscopeEvent event) {
+          if (!_isCalibrated) {
+            // Use first reading as calibration baseline
+            _calibrationX = event.x;
+            _calibrationY = event.y;
+            _isCalibrated = true;
+            return;
+          }
+          
+          // Apply calibration offset
+          double adjustedX = event.x - _calibrationX;
+          double adjustedY = event.y - _calibrationY;
+          
+          // Apply dead zone
+          if (adjustedX.abs() < deadZone) adjustedX = 0;
+          if (adjustedY.abs() < deadZone) adjustedY = 0;
+          
+          // Normalize to -1 to 1 range (assuming max rotation of 45 degrees)
+          const double maxRotation = math.pi / 4; // 45 degrees in radians
+          adjustedX = (adjustedX / maxRotation).clamp(-1.0, 1.0);
+          adjustedY = (adjustedY / maxRotation).clamp(-1.0, 1.0);
+          
+          // Invert Y-axis for more intuitive control (tilt forward = move up)
+          adjustedY = -adjustedY;
+          
+          // Call the update callback
+          onGyroscopeUpdate?.call(adjustedX, adjustedY);
+        },
+        onError: (error) {
+          print('Gyroscope error: $error');
+          // Gyroscope not available, do nothing
+        },
+      );
+    } catch (e) {
+      print('Failed to initialize gyroscope: $e');
+      // Gyroscope not available, do nothing
+    }
   }
   
   void recalibrate() {

@@ -138,3 +138,9 @@ Below is a list of current bugs. please work though these one at a time.
    - *On the blue ship the right shield is on top of the blue ship*
    - *On the orange ship the bottom shield is on top of the orange ship*
    - *The shields aren't aligned to the middle of the ships*
+
+## Version Creation Reminder
+You should always be createing a new version if you'd made modifications to the game
+
+## Ultra Mode Blank Screen Bug
+Ok. So Ultra difficulty isn't displaying at all, when clicking ultra mode from the menu all that is displayed is a blank page. No background, no game play and if I just leave the app running on the blank page it doesn't even display the game over menu which I'd expect if the game was running.
