@@ -15,12 +15,12 @@ class GameColors {
 
 class GameSizes {
   // Ship dimensions
-  static const double shipSize = 30.0;
-  static const double astronautSize = 25.0;
+  static const double shipSize = 50.0;  // Increased from 30px for better visibility
+  static const double astronautSize = 40.0;  // Increased proportionally
   
   // Shield dimensions
-  static const double shieldWidth = 15.0;
-  static const double shieldHeight = 30.0;
+  static const double shieldWidth = 20.0;  // Increased proportionally
+  static const double shieldHeight = 45.0;  // Increased proportionally
   
   // Wave properties
   static const double waveThickness = 40.0;
@@ -50,8 +50,8 @@ class GameConstants {
   static const double waveFrequency = 2.0; // seconds between waves
   
   // Gap sizes (multiplier of ship width)
-  static const double easyGapMultiplier = 1.3; // Ship width + 30%
-  static const double normalGapMultiplier = 1.2; // Ship width + 20%
+  static const double easyGapMultiplier = 2.0; // Gap is 2x ship width (50% space on each side)
+  static const double normalGapMultiplier = 2.0; // Gap is 2x ship width (50% space on each side)
   
   // Power-ups
   static const int wavesPerPowerUp = 4;

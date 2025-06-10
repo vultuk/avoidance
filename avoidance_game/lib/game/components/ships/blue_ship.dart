@@ -37,11 +37,10 @@ class BlueShip extends PositionComponent with CollisionCallbacks {
         baseColor: GameColors.orange,
       );
       // Position shield to the left of ship with proper spacing
-      // Since shield has center anchor, we need to position its center
-      leftShield!.position = Vector2(
-        -size.x/2 - GameSizes.shieldWidth/2 - 5, // Shield center to the left
-        0 // Centered vertically
-      );
+      // Ship has center anchor, so (0,0) is ship center
+      // Left shield should be: -shipSize/2 - gap - shieldWidth/2
+      final leftShieldX = -(GameSizes.shipSize/2) - 8 - (GameSizes.shieldWidth/2);
+      leftShield!.position = Vector2(leftShieldX, 0);
       add(leftShield!);
       
       // Right shield (protects from orange waves)
@@ -49,12 +48,9 @@ class BlueShip extends PositionComponent with CollisionCallbacks {
         shieldPosition: ShieldPosition.right,
         baseColor: GameColors.orange,
       );
-      // Position shield to the right of ship with proper spacing
-      // Since shield has center anchor, we need to position its center
-      rightShield!.position = Vector2(
-        size.x/2 + GameSizes.shieldWidth/2 + 5, // Shield center to the right
-        0 // Centered vertically
-      );
+      // Right shield should be: shipSize/2 + gap + shieldWidth/2
+      final rightShieldX = (GameSizes.shipSize/2) + 8 + (GameSizes.shieldWidth/2);
+      rightShield!.position = Vector2(rightShieldX, 0);
       add(rightShield!);
     }
   }

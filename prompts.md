@@ -126,3 +126,15 @@ Below is a list of current bugs. please work though these one at a time.
    - *On the blue ship the right shield is on top of the blue ship*
    - *On the orange ship the bottom shield is on top of the orange ship*
    - *The shields aren't aligned to the middle of the ships*
+
+## Version Request 3.1.3
+Don't forget a version
+
+## Bug Report 6
+Below is a list of current bugs. please work though these one at a time.
+
+1. I think we need to make the ships bigger and also the holes in the particle waves. Currently it's almost impossible to see what's going on under my finger when moving the ship. The gap also needs to be sinsiderably bigger than the ship (about 50% at either side. If the ship is 50px then we need the gap to be 100px.
+2. Shield placement is still really bad
+   - *On the blue ship the right shield is on top of the blue ship*
+   - *On the orange ship the bottom shield is on top of the orange ship*
+   - *The shields aren't aligned to the middle of the ships*

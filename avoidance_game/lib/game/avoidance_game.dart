@@ -86,7 +86,7 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
 
   void _setupEasyMode() {
     blueShip = BlueShip(
-      position: Vector2(size.x / 2, size.y - 100),
+      position: Vector2(size.x / 2, size.y - 120), // Increased offset for larger ship
       gameSize: size,
     );
     add(blueShip);
@@ -95,14 +95,14 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
   void _setupMediumMode() {
     // Add blue ship (controls vertical movement)
     blueShip = BlueShip(
-      position: Vector2(size.x / 2, size.y - 100),
+      position: Vector2(size.x / 2, size.y - 120), // Increased offset for larger ship
       gameSize: size,
     );
     add(blueShip);
     
     // Add orange ship (controls horizontal movement)
     orangeShip = OrangeShip(
-      position: Vector2(100, size.y / 2),
+      position: Vector2(120, size.y / 2), // Increased offset for larger ship
       gameSize: size,
     );
     add(orangeShip!);
@@ -111,13 +111,13 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
   void _setupHardMode() {
     // Add both ships
     blueShip = BlueShip(
-      position: Vector2(size.x / 2, size.y - 100),
+      position: Vector2(size.x / 2, size.y - 120), // Increased offset for larger ship
       gameSize: size,
     );
     add(blueShip);
     
     orangeShip = OrangeShip(
-      position: Vector2(100, size.y / 2),
+      position: Vector2(120, size.y / 2), // Increased offset for larger ship
       gameSize: size,
     );
     add(orangeShip!);
