@@ -66,7 +66,7 @@ class GameConstants {
   static const double oxygenWarningThreshold = 20.0;
   
   // Astronaut movement (Ultra mode)
-  static const double astronautMaxSpeed = 200.0; // pixels per second
+  static const double astronautMaxSpeed = 400.0; // pixels per second - increased for better responsiveness
   static const double gyroscopeDeadZone = 5.0; // degrees
   
   // Animation durations

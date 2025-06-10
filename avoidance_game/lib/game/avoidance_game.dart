@@ -255,6 +255,11 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
       if (oxygenBar!.isOxygenDepleted()) {
         gameOver();
       }
+      
+      // Check if astronaut is off screen
+      if (astronaut != null && astronaut!.isOffScreen(size)) {
+        gameOver();
+      }
     }
   }
   

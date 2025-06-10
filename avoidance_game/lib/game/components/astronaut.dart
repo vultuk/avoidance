@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import '../../utils/constants.dart';
 
 class Astronaut extends PositionComponent {
-  static const double maxSpeed = 200.0; // pixels per second
+  static const double maxSpeed = 400.0; // pixels per second - increased for faster movement
   static const double friction = 0.85; // momentum friction
-  static const double accelerationRate = 15.0; // acceleration multiplier for gyroscope input
+  static const double accelerationRate = 30.0; // acceleration multiplier for gyroscope input - doubled for quicker response
   
   late RectangleComponent body;
   late RectangleComponent helmet;
@@ -117,10 +117,13 @@ class Astronaut extends PositionComponent {
     
     // Update position
     position += velocity * dt;
-    
-    // Let astronaut float freely - no bounds checking
-    // It can go off screen without any consequences
   }
-
-  // No collision handling - astronaut is just visual
+  
+  bool isOffScreen(Vector2 gameSize) {
+    // Check if astronaut is completely off screen
+    return position.x < -size.x/2 || 
+           position.x > gameSize.x + size.x/2 ||
+           position.y < -size.y/2 || 
+           position.y > gameSize.y + size.y/2;
+  }
 }
