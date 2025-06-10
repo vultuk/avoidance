@@ -147,3 +147,6 @@ Ok. So Ultra difficulty isn't displaying at all, when clicking ultra mode from t
 
 ## Make Ultra Mode Like Hard Mode
 I've made a change to the setupUltra mode to make it the same as hard. Why don't you do th same elsewhere in the game, lets just make ultra work exactly like Hard and then we can go from there.
+
+## Add Astronaut Back to Ultra Mode
+Ok. So ultra mode is working in this cut down version. Lets add in the astronaut with just gyroscope controls. No game over if it goes off screen, no oxygen, just a floating astronaut

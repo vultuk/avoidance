@@ -1,13 +1,8 @@
 import 'package:flame/components.dart';
-import 'package:flame/collisions.dart';
-import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 import '../../utils/constants.dart';
-import '../avoidance_game.dart';
-import 'particle_wave.dart';
-import 'power_up.dart';
 
-class Astronaut extends PositionComponent with CollisionCallbacks, HasGameRef<AvoidanceGame> {
+class Astronaut extends PositionComponent {
   static const double maxSpeed = 200.0; // pixels per second
   static const double friction = 0.85; // momentum friction
   static const double accelerationRate = 15.0; // acceleration multiplier for gyroscope input
@@ -32,10 +27,12 @@ class Astronaut extends PositionComponent with CollisionCallbacks, HasGameRef<Av
   Future<void> onLoad() async {
     await super.onLoad();
     
-    // Add a bright background to make astronaut visible for debugging
-    add(RectangleComponent(
-      size: size,
-      paint: Paint()..color = Colors.yellow.withOpacity(0.5),
+    // Add a subtle glow to make astronaut visible
+    add(CircleComponent(
+      radius: size.x / 2,
+      position: size / 2,
+      anchor: Anchor.center,
+      paint: Paint()..color = Colors.cyan.withOpacity(0.2),
     ));
     
     // Scale components to new astronaut size (40px)
@@ -97,8 +94,7 @@ class Astronaut extends PositionComponent with CollisionCallbacks, HasGameRef<Av
       paint: Paint()..color = Colors.white,
     ));
     
-    // Add collision detection
-    add(RectangleHitbox());
+    // No collision detection - astronaut is just visual
   }
 
   void updateTargetVelocity(double x, double y) {
@@ -122,32 +118,9 @@ class Astronaut extends PositionComponent with CollisionCallbacks, HasGameRef<Av
     // Update position
     position += velocity * dt;
     
-    // Keep astronaut within screen bounds
-    final gameSize = gameRef.size;
-    position.x = position.x.clamp(size.x / 2, gameSize.x - size.x / 2);
-    position.y = position.y.clamp(size.y / 2, gameSize.y - size.y / 2);
-    
-    // If we hit the edge, reduce velocity in that direction
-    if (position.x <= size.x / 2 || position.x >= gameSize.x - size.x / 2) {
-      velocity.x *= 0.3; // Dampen horizontal velocity
-    }
-    if (position.y <= size.y / 2 || position.y >= gameSize.y - size.y / 2) {
-      velocity.y *= 0.3; // Dampen vertical velocity
-    }
+    // Let astronaut float freely - no bounds checking
+    // It can go off screen without any consequences
   }
 
-  @override
-  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    super.onCollision(intersectionPoints, other);
-    
-    if (other is ParticleWave) {
-      // Astronaut collides with both color waves
-      final game = findParent<AvoidanceGame>();
-      if (game != null) {
-        game.gameOver();
-      }
-    } else if (other is PowerUp) {
-      // Let the PowerUp handle the collision
-    }
-  }
+  // No collision handling - astronaut is just visual
 }

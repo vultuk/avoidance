@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import '../utils/constants.dart';
 import 'components/ships/blue_ship.dart';
 import 'components/ships/orange_ship.dart';
+import 'components/astronaut.dart';
 import 'components/shield.dart';
 import 'managers/wave_manager.dart';
 import 'managers/score_manager.dart';
+import 'managers/gyroscope_manager.dart';
 import 'managers/screen_effects_manager.dart';
 import 'screens/game_over_screen.dart';
 import 'package:flame/camera.dart';
@@ -19,6 +21,8 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
   late ScreenEffectsManager screenEffectsManager;
   late BlueShip blueShip;
   OrangeShip? orangeShip;
+  Astronaut? astronaut;
+  GyroscopeManager? gyroscopeManager;
   bool isGameOver = false;
   bool isPaused = false;
   
@@ -118,7 +122,7 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
   }
 
   void _setupUltraMode() {
-    // Add both ships
+    // Add both ships (like Hard mode)
     blueShip = BlueShip(
       position: Vector2(size.x / 2, size.y - 120), // Increased offset for larger ship
       gameSize: size,
@@ -130,6 +134,19 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
       gameSize: size,
     );
     add(orangeShip!);
+    
+    // Add astronaut as an extra element (no game mechanics)
+    astronaut = Astronaut(
+      position: Vector2(size.x / 2, size.y / 2),
+    );
+    add(astronaut!);
+    
+    // Initialize gyroscope for astronaut control
+    gyroscopeManager = GyroscopeManager();
+    gyroscopeManager!.onGyroscopeUpdate = (x, y) {
+      astronaut?.updateTargetVelocity(x, y);
+    };
+    gyroscopeManager!.startListening();
   }
 
   void _addHUD() {
@@ -227,7 +244,7 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
   
   @override
   void onRemove() {
-    // Removed gyroscope disposal - Ultra mode no longer uses it
+    gyroscopeManager?.dispose();
     super.onRemove();
   }
   
