@@ -58,5 +58,8 @@ android-sdk/
 # APK files
 *.apk
 
-# Release notes (keep them in repo)
-!release-notes-*.md
+# ZIP files
+*.zip
+
+# Release notes
+release-notes-*.md

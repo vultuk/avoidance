@@ -53,3 +53,9 @@ The prompts file should be added to git
 
 ## Bug Report 3 & Git Cleanup Request
 It appears that only one particle wave now appears. When it goes off screen no further ones appear. This is happening on all modes of the game. Please also remove the large files from git and add a .gitignore to make sure it doesn't happen again. We need to keep everything visible on github
+
+## Git Cleanup Request 2
+Lets make sure that none of these zips, apks and release notes make it into git. And remove any that already exist
+
+## New Release Build Request
+Can you build a new release please. I don't think the one you just released was in fact new. Lets buuld a whole new one and double check so we don't try and fix something that has already been fixed.
