@@ -59,3 +59,6 @@ Lets make sure that none of these zips, apks and release notes make it into git.
 
 ## New Release Build Request
 Can you build a new release please. I don't think the one you just released was in fact new. Lets buuld a whole new one and double check so we don't try and fix something that has already been fixed.
+
+## GitHub Actions Build Request
+Can you build a github action that will automatically build the apk and create a github release?

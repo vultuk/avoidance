@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.avoidance.avoidance_game"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "27.0.12077973"
+    // ndkVersion = "27.0.12077973" // Commented out - NDK not available
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
