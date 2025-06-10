@@ -7,7 +7,7 @@ import '../particle_wave.dart';
 import '../shield.dart';
 import '../../avoidance_game.dart';
 
-class BlueShip extends PositionComponent with DragCallbacks, CollisionCallbacks {
+class BlueShip extends PositionComponent with CollisionCallbacks {
   final Vector2 gameSize;
   Shield? leftShield;
   Shield? rightShield;
@@ -37,8 +37,9 @@ class BlueShip extends PositionComponent with DragCallbacks, CollisionCallbacks 
         baseColor: GameColors.orange,
       );
       // Position shield to the left of ship with proper spacing
+      // Since shield has center anchor, we need to position its center
       leftShield!.position = Vector2(
-        -size.x/2 - GameSizes.shieldWidth - 5, // Add 5px gap
+        -size.x/2 - GameSizes.shieldWidth/2 - 5, // Shield center to the left
         0 // Centered vertically
       );
       add(leftShield!);
@@ -49,8 +50,9 @@ class BlueShip extends PositionComponent with DragCallbacks, CollisionCallbacks 
         baseColor: GameColors.orange,
       );
       // Position shield to the right of ship with proper spacing
+      // Since shield has center anchor, we need to position its center
       rightShield!.position = Vector2(
-        size.x/2 + GameSizes.shieldWidth + 5, // Add 5px gap
+        size.x/2 + GameSizes.shieldWidth/2 + 5, // Shield center to the right
         0 // Centered vertically
       );
       add(rightShield!);
@@ -91,25 +93,7 @@ class BlueShip extends PositionComponent with DragCallbacks, CollisionCallbacks 
     canvas.drawPath(path, paint);
   }
 
-  @override
-  bool onDragUpdate(DragUpdateEvent event) {
-    final game = findParent<AvoidanceGame>();
-    
-    // In Easy mode, handle drag normally
-    // In Medium/Hard modes, this is handled by multi-touch in AvoidanceGame
-    if (game?.difficulty == Difficulty.easy) {
-      // Update position based on drag
-      position.add(event.localDelta);
-      
-      // Keep ship within screen bounds
-      position.x = position.x.clamp(size.x / 2, gameSize.x - size.x / 2);
-      position.y = position.y.clamp(size.y / 2, gameSize.y - size.y / 2);
-      
-      return true;
-    }
-    
-    return false;
-  }
+  // Drag handling is now managed by AvoidanceGame's multi-touch system for all modes
 
   @override
   void onCollisionStart(

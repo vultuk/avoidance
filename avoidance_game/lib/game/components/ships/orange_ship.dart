@@ -37,9 +37,10 @@ class OrangeShip extends PositionComponent with CollisionCallbacks {
         baseColor: GameColors.blue,
       );
       // Position shield above ship with proper spacing
+      // For top/bottom shields, the height becomes width (rotated)
       topShield!.position = Vector2(
         0, // Centered horizontally
-        -size.y/2 - GameSizes.shieldHeight/2 - 5 // Add 5px gap
+        -size.y/2 - GameSizes.shieldWidth/2 - 5 // Shield center above ship
       );
       add(topShield!);
       
@@ -49,9 +50,10 @@ class OrangeShip extends PositionComponent with CollisionCallbacks {
         baseColor: GameColors.blue,
       );
       // Position shield below ship with proper spacing
+      // For top/bottom shields, the height becomes width (rotated)
       bottomShield!.position = Vector2(
         0, // Centered horizontally
-        size.y/2 + GameSizes.shieldHeight/2 + 5 // Add 5px gap
+        size.y/2 + GameSizes.shieldWidth/2 + 5 // Shield center below ship
       );
       add(bottomShield!);
     }

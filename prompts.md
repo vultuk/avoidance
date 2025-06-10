@@ -117,3 +117,12 @@ Shields should be shown in Medium mode. However, there should be no game mechani
 
 ## Shield Damage Clarification
 Shields will take damage in Hard AND Ultra mode.
+
+## Bug Report 5
+Below is a list of current bugs. please work though these one at a time.
+
+1. In easy mode it's impossible to move the blue ship at all
+2. Shield placement is still really bad
+   - *On the blue ship the right shield is on top of the blue ship*
+   - *On the orange ship the bottom shield is on top of the orange ship*
+   - *The shields aren't aligned to the middle of the ships*

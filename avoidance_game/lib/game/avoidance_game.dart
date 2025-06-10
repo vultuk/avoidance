@@ -268,8 +268,20 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
   // Multi-touch support for Medium and Hard modes
   @override
   bool onDragStart(int pointerId, DragStartInfo info) {
-    if (difficulty == Difficulty.medium || difficulty == Difficulty.hard) {
-      // Find which ship was touched
+    // Handle Easy mode (single ship)
+    if (difficulty == Difficulty.easy) {
+      final touchPoint = info.eventPosition.global;
+      final components = componentsAtPoint(touchPoint);
+      
+      for (final component in components) {
+        if (component is BlueShip) {
+          _draggingComponents[pointerId] = component;
+          return true;
+        }
+      }
+    }
+    // Handle Medium and Hard modes (dual ships)
+    else if (difficulty == Difficulty.medium || difficulty == Difficulty.hard) {
       final touchPoint = info.eventPosition.global;
       final components = componentsAtPoint(touchPoint);
       
