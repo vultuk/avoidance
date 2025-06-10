@@ -47,3 +47,9 @@ Ok. Few bugs. 1. Medium mode. The game ends when the orange ship touches the blu
 
 ## Prompts Storage Request
 Please store all of the prompts I give you in @prompts.md. Add all the previous prompts and then going forward every new prompt.
+
+## Git Tracking Request
+The prompts file should be added to git
+
+## Bug Report 3 & Git Cleanup Request
+It appears that only one particle wave now appears. When it goes off screen no further ones appear. This is happening on all modes of the game. Please also remove the large files from git and add a .gitignore to make sure it doesn't happen again. We need to keep everything visible on github

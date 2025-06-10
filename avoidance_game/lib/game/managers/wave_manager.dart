@@ -27,16 +27,16 @@ class WaveManager extends Component with HasGameRef<AvoidanceGame> {
   void update(double dt) {
     if (gameRef.isGameOver || gameRef.isPaused) return;
     
-    // Check if blue wave has moved off screen
-    if (_currentBlueWave != null && _currentBlueWave!.isMounted) {
-      if (_currentBlueWave!.position.y > gameSize.y) {
+    // Check if blue wave has moved off screen or been removed
+    if (_currentBlueWave != null) {
+      if (!_currentBlueWave!.isMounted || _currentBlueWave!.position.y > gameSize.y) {
         _currentBlueWave = null;
       }
     }
     
-    // Check if orange wave has moved off screen
-    if (_currentOrangeWave != null && _currentOrangeWave!.isMounted) {
-      if (_currentOrangeWave!.position.x > gameSize.x) {
+    // Check if orange wave has moved off screen or been removed
+    if (_currentOrangeWave != null) {
+      if (!_currentOrangeWave!.isMounted || _currentOrangeWave!.position.x > gameSize.x) {
         _currentOrangeWave = null;
       }
     }
