@@ -13,7 +13,8 @@ class WaveManager extends Component with HasGameRef<AvoidanceGame> {
   double _currentWaveSpeed = GameConstants.baseWaveSpeed;
   int _waveCount = 0;
   int _wavesSinceLastPowerUp = 0;
-  ParticleWave? _currentWave;
+  ParticleWave? _currentBlueWave;
+  ParticleWave? _currentOrangeWave;
   
   WaveManager({
     required this.gameSize,
@@ -25,15 +26,22 @@ class WaveManager extends Component with HasGameRef<AvoidanceGame> {
   void update(double dt) {
     if (gameRef.isGameOver || gameRef.isPaused) return;
     
-    // Check if current wave is still on screen
-    if (_currentWave != null && _currentWave!.isMounted) {
-      // For Easy mode, check if wave has moved off screen
-      if (difficulty == Difficulty.easy) {
-        if (_currentWave!.position.y > gameSize.y) {
-          _currentWave = null;
-        }
+    // Check if blue wave has moved off screen
+    if (_currentBlueWave != null && _currentBlueWave!.isMounted) {
+      if (_currentBlueWave!.position.y > gameSize.y) {
+        _currentBlueWave = null;
       }
-      // Don't spawn new wave if current wave is still active
+    }
+    
+    // Check if orange wave has moved off screen
+    if (_currentOrangeWave != null && _currentOrangeWave!.isMounted) {
+      if (_currentOrangeWave!.position.x > gameSize.x) {
+        _currentOrangeWave = null;
+      }
+    }
+    
+    // For Easy mode, only spawn if no blue wave is active
+    if (difficulty == Difficulty.easy && _currentBlueWave != null) {
       return;
     }
     
@@ -66,17 +74,24 @@ class WaveManager extends Component with HasGameRef<AvoidanceGame> {
     // Generate wave based on difficulty
     switch (difficulty) {
       case Difficulty.easy:
-        _spawnBlueWaveFromTop(gapSize);
+        if (_currentBlueWave == null) {
+          _spawnBlueWaveFromTop(gapSize);
+        }
         break;
         
       case Difficulty.medium:
       case Difficulty.hard:
       case Difficulty.ultra:
-        // Alternate between blue waves from top and orange waves from left
+        // For Medium+ modes, spawn blue and orange waves independently
+        // Alternate between them, but allow both to be on screen
         if (_waveCount % 2 == 0) {
-          _spawnBlueWaveFromTop(gapSize);
+          if (_currentBlueWave == null) {
+            _spawnBlueWaveFromTop(gapSize);
+          }
         } else {
-          _spawnOrangeWaveFromLeft(gapSize);
+          if (_currentOrangeWave == null) {
+            _spawnOrangeWaveFromLeft(gapSize);
+          }
         }
         break;
     }
@@ -100,7 +115,7 @@ class WaveManager extends Component with HasGameRef<AvoidanceGame> {
       gameSize: gameSize,
     );
     
-    _currentWave = wave;
+    _currentBlueWave = wave;
     gameRef.add(wave);
   }
 
@@ -120,7 +135,7 @@ class WaveManager extends Component with HasGameRef<AvoidanceGame> {
       gameSize: gameSize,
     );
     
-    _currentWave = wave;
+    _currentOrangeWave = wave;
     gameRef.add(wave);
   }
 

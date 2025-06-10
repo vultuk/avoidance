@@ -4,6 +4,7 @@ import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 import '../utils/constants.dart';
 import 'components/ships/blue_ship.dart';
+import 'components/ships/orange_ship.dart';
 import 'managers/wave_manager.dart';
 import 'managers/score_manager.dart';
 import 'screens/game_over_screen.dart';
@@ -14,6 +15,7 @@ class AvoidanceGame extends FlameGame with DragCallbacks, HasCollisionDetection 
   late ScoreManager scoreManager;
   late WaveManager waveManager;
   late BlueShip blueShip;
+  OrangeShip? orangeShip;
   bool isGameOver = false;
   bool isPaused = false;
 
@@ -76,8 +78,19 @@ class AvoidanceGame extends FlameGame with DragCallbacks, HasCollisionDetection 
   }
 
   void _setupMediumMode() {
-    // TODO: Implement medium mode with orange ship
-    _setupEasyMode(); // For now, just use easy mode
+    // Add blue ship (controls vertical movement)
+    blueShip = BlueShip(
+      position: Vector2(size.x / 2, size.y - 100),
+      gameSize: size,
+    );
+    add(blueShip);
+    
+    // Add orange ship (controls horizontal movement)
+    orangeShip = OrangeShip(
+      position: Vector2(100, size.y / 2),
+      gameSize: size,
+    );
+    add(orangeShip!);
   }
 
   void _setupHardMode() {
