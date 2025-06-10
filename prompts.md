@@ -98,3 +98,22 @@ Error: Process completed with exit code 1.
 
 ## Files Update Check
 Is the @prompts.md and @todo.md files up to date?
+
+## Bug Report 4
+Below is a list of current bugs. please work though these one at a time.
+
+1. Ships (both blue and orange) can only be moved in one direction.
+   - *Blue can only be moved left and right*
+   - *Orange can only be move up and down*
+2. Shields are not showing on the ships in Medium mode
+3. Shield placement is really bad
+   - *On the blue ship the right shield is on top of the blue ship*
+   - *On the orange ship the bottom shield is on top of the orange ship*
+   - *The shields aren't aligned to the middle of the ships*
+4. Ultra difficulty is just a blank gray screen. No game appears at all.
+
+## Shield Clarification for Medium Mode
+Shields should be shown in Medium mode. However, there should be no game mechanics for them. The shields will not deplete and no power ups will be needed. They are just there for visual clues.
+
+## Shield Damage Clarification
+Shields will take damage in Hard AND Ultra mode.

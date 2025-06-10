@@ -139,14 +139,19 @@ class Shield extends PositionComponent with CollisionCallbacks {
     
     // Check if collision is with a particle wave of the same color
     if (other is ParticleWave && other.color == baseColor && !isDestroyed) {
-      takeDamage();
-      
-      // Trigger screen effects for shield hit
       final game = findParent<AvoidanceGame>();
-      game?.screenEffectsManager.triggerShieldHit();
       
-      // Check if all shields are destroyed for game over
-      game?.checkShieldGameOver();
+      // Only take damage and trigger effects in Hard and Ultra modes
+      if (game?.difficulty == Difficulty.hard || game?.difficulty == Difficulty.ultra) {
+        takeDamage();
+        
+        // Trigger screen effects for shield hit
+        game?.screenEffectsManager.triggerShieldHit();
+        
+        // Check if all shields are destroyed for game over
+        game?.checkShieldGameOver();
+      }
+      // In Medium mode, shields are just visual indicators and don't take damage
       
       // The wave continues past the shield, so we don't remove it
     }

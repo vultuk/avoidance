@@ -32,6 +32,12 @@ class Astronaut extends PositionComponent with CollisionCallbacks, HasGameRef<Av
   Future<void> onLoad() async {
     await super.onLoad();
     
+    // Add a debug background to make astronaut visible
+    add(RectangleComponent(
+      size: size,
+      paint: Paint()..color = Colors.grey.withOpacity(0.3),
+    ));
+    
     // Main body (torso)
     body = RectangleComponent(
       size: Vector2(15, 18),

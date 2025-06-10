@@ -136,6 +136,20 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
     );
     add(oxygenBar!);
     
+    // Add a debug indicator to confirm Ultra mode is loading
+    add(TextComponent(
+      text: 'ULTRA MODE',
+      position: Vector2(size.x / 2, 100),
+      anchor: Anchor.center,
+      textRenderer: TextPaint(
+        style: const TextStyle(
+          color: Colors.purple,
+          fontSize: 30,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ));
+    
     // Initialize gyroscope manager
     gyroscopeManager = GyroscopeManager();
     gyroscopeManager!.onGyroscopeUpdate = (x, y) {
@@ -274,15 +288,25 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
     final component = _draggingComponents[pointerId];
     if (component != null) {
       if (component is BlueShip) {
-        // Update blue ship position (vertical movement)
+        // Update blue ship position (both X and Y)
         component.position.x += info.delta.global.x;
+        component.position.y += info.delta.global.y;
         component.position.x = component.position.x.clamp(
           component.size.x / 2,
           size.x - component.size.x / 2,
         );
+        component.position.y = component.position.y.clamp(
+          component.size.y / 2,
+          size.y - component.size.y / 2,
+        );
       } else if (component is OrangeShip) {
-        // Update orange ship position (horizontal movement)
+        // Update orange ship position (both X and Y)
+        component.position.x += info.delta.global.x;
         component.position.y += info.delta.global.y;
+        component.position.x = component.position.x.clamp(
+          component.size.x / 2,
+          size.x - component.size.x / 2,
+        );
         component.position.y = component.position.y.clamp(
           component.size.y / 2,
           size.y - component.size.y / 2,

@@ -28,15 +28,19 @@ class BlueShip extends PositionComponent with DragCallbacks, CollisionCallbacks 
     // Add collision detection
     add(RectangleHitbox());
     
-    // Add shields if in Hard mode
+    // Add shields if in Medium or Hard mode
     final game = findParent<AvoidanceGame>();
-    if (game != null && game.difficulty == Difficulty.hard) {
+    if (game != null && (game.difficulty == Difficulty.medium || game.difficulty == Difficulty.hard)) {
       // Left shield (protects from orange waves)
       leftShield = Shield(
         shieldPosition: ShieldPosition.left,
         baseColor: GameColors.orange,
       );
-      leftShield!.position = Vector2(-size.x/2 - GameSizes.shieldWidth/2, 0);
+      // Position shield to the left of ship with proper spacing
+      leftShield!.position = Vector2(
+        -size.x/2 - GameSizes.shieldWidth - 5, // Add 5px gap
+        0 // Centered vertically
+      );
       add(leftShield!);
       
       // Right shield (protects from orange waves)
@@ -44,7 +48,11 @@ class BlueShip extends PositionComponent with DragCallbacks, CollisionCallbacks 
         shieldPosition: ShieldPosition.right,
         baseColor: GameColors.orange,
       );
-      rightShield!.position = Vector2(size.x/2 + GameSizes.shieldWidth/2, 0);
+      // Position shield to the right of ship with proper spacing
+      rightShield!.position = Vector2(
+        size.x/2 + GameSizes.shieldWidth + 5, // Add 5px gap
+        0 // Centered vertically
+      );
       add(rightShield!);
     }
   }

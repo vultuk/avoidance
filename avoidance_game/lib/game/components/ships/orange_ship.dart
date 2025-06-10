@@ -28,15 +28,19 @@ class OrangeShip extends PositionComponent with CollisionCallbacks {
     // Add collision detection
     add(RectangleHitbox());
     
-    // Add shields if in Hard mode
+    // Add shields if in Medium or Hard mode
     final game = findParent<AvoidanceGame>();
-    if (game != null && game.difficulty == Difficulty.hard) {
+    if (game != null && (game.difficulty == Difficulty.medium || game.difficulty == Difficulty.hard)) {
       // Top shield (protects from blue waves)
       topShield = Shield(
         shieldPosition: ShieldPosition.top,
         baseColor: GameColors.blue,
       );
-      topShield!.position = Vector2(0, -size.y/2 - GameSizes.shieldWidth/2);
+      // Position shield above ship with proper spacing
+      topShield!.position = Vector2(
+        0, // Centered horizontally
+        -size.y/2 - GameSizes.shieldHeight/2 - 5 // Add 5px gap
+      );
       add(topShield!);
       
       // Bottom shield (protects from blue waves)
@@ -44,7 +48,11 @@ class OrangeShip extends PositionComponent with CollisionCallbacks {
         shieldPosition: ShieldPosition.bottom,
         baseColor: GameColors.blue,
       );
-      bottomShield!.position = Vector2(0, size.y/2 + GameSizes.shieldWidth/2);
+      // Position shield below ship with proper spacing
+      bottomShield!.position = Vector2(
+        0, // Centered horizontally
+        size.y/2 + GameSizes.shieldHeight/2 + 5 // Add 5px gap
+      );
       add(bottomShield!);
     }
   }
