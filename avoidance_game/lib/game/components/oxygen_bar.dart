@@ -11,6 +11,7 @@ class OxygenBar extends PositionComponent {
   OxygenBar({required Vector2 position}) : super(
     position: position,
     size: Vector2(200, 30),
+    anchor: Anchor.topCenter,
   );
   
   double get currentOxygen => _currentOxygen;

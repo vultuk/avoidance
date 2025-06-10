@@ -147,6 +147,7 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
     oxygenBar = OxygenBar(
       position: Vector2(size.x / 2, 70), // Position below score
     );
+    oxygenBar!.priority = 10; // Same priority as other HUD elements
     add(oxygenBar!);
     
     // Initialize gyroscope for astronaut control
@@ -248,7 +249,7 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
     scoreText.text = 'Score: ${scoreManager.currentScore}';
     
     // Update oxygen in Ultra mode
-    if (difficulty == Difficulty.ultra && oxygenBar != null) {
+    if (difficulty == Difficulty.ultra && oxygenBar != null && oxygenBar!.isMounted) {
       oxygenBar!.depleteOxygen(dt);
       
       // Check for oxygen depletion
@@ -257,7 +258,7 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
       }
       
       // Check if astronaut is off screen
-      if (astronaut != null && astronaut!.isOffScreen(size)) {
+      if (astronaut != null && astronaut!.isMounted && astronaut!.isOffScreen(size)) {
         gameOver();
       }
     }
