@@ -88,3 +88,13 @@ Build APK Action : 3m 54s
 
 ## Create New Version Request
 We also need to create a new version please
+
+## GitHub Actions Permissions Error
+Create release action is giving the following error   shell: /usr/bin/bash -e {0}
+  env:
+    GITHUB_TOKEN: ***
+HTTP 403: Resource not accessible by integration (https://api.github.com/repos/vultuk/avoidance/releases)
+Error: Process completed with exit code 1.
+
+## Files Update Check
+Is the @prompts.md and @todo.md files up to date?
