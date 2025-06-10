@@ -9,7 +9,7 @@ import 'managers/score_manager.dart';
 import 'screens/game_over_screen.dart';
 import 'package:flame/camera.dart';
 
-class AvoidanceGame extends FlameGame with HasDraggables, HasCollisionDetection {
+class AvoidanceGame extends FlameGame with DragCallbacks, HasCollisionDetection {
   final Difficulty difficulty;
   late ScoreManager scoreManager;
   late WaveManager waveManager;
