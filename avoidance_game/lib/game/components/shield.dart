@@ -1,22 +1,36 @@
 import 'package:flame/components.dart';
+import 'package:flame/collisions.dart';
 import 'package:flutter/material.dart';
 import '../../utils/constants.dart';
+import 'particle_wave.dart';
+import '../avoidance_game.dart';
 
-class Shield extends PositionComponent {
-  final bool isVertical;
+enum ShieldPosition { left, right, top, bottom }
+
+class Shield extends PositionComponent with CollisionCallbacks {
+  final ShieldPosition shieldPosition;
+  final Color baseColor; // Color of the wave it protects from
   int health = 3;
   final int maxHealth = 3;
   
   Shield({
-    required Vector2 position,
-    required this.isVertical,
+    required this.shieldPosition,
+    required this.baseColor,
   }) : super(
-    position: position,
-    size: isVertical 
-        ? Vector2(GameSizes.shieldWidth, GameSizes.shieldHeight)
-        : Vector2(GameSizes.shieldHeight, GameSizes.shieldWidth),
+    size: _getSize(shieldPosition),
     anchor: Anchor.center,
   );
+  
+  static Vector2 _getSize(ShieldPosition position) {
+    switch (position) {
+      case ShieldPosition.left:
+      case ShieldPosition.right:
+        return Vector2(GameSizes.shieldWidth, GameSizes.shieldHeight);
+      case ShieldPosition.top:
+      case ShieldPosition.bottom:
+        return Vector2(GameSizes.shieldHeight, GameSizes.shieldWidth);
+    }
+  }
 
   @override
   void render(Canvas canvas) {
@@ -25,21 +39,23 @@ class Shield extends PositionComponent {
     final paint = Paint()
       ..style = PaintingStyle.fill;
     
-    // Color based on health
+    // Color based on health, using the base color with varying opacity
     switch (health) {
       case 3:
-        paint.color = GameColors.shieldGreen;
+        paint.color = baseColor;
         break;
       case 2:
-        paint.color = GameColors.shieldYellow;
+        paint.color = baseColor.withOpacity(0.7);
         break;
       case 1:
-        paint.color = GameColors.shieldRed;
+        paint.color = baseColor.withOpacity(0.4);
         break;
     }
     
     // Draw curved shield shape
     final path = Path();
+    
+    final isVertical = shieldPosition == ShieldPosition.left || shieldPosition == ShieldPosition.right;
     
     if (isVertical) {
       // Vertical shield (curved on sides)
@@ -106,4 +122,30 @@ class Shield extends PositionComponent {
   }
   
   bool get isDestroyed => health <= 0;
+  
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    // Add hitbox for collision detection
+    add(RectangleHitbox());
+  }
+  
+  @override
+  void onCollisionStart(
+    Set<Vector2> intersectionPoints,
+    PositionComponent other,
+  ) {
+    super.onCollisionStart(intersectionPoints, other);
+    
+    // Check if collision is with a particle wave of the same color
+    if (other is ParticleWave && other.color == baseColor && !isDestroyed) {
+      takeDamage();
+      
+      // Check if all shields are destroyed for game over
+      final game = findParent<AvoidanceGame>();
+      game?.checkShieldGameOver();
+      
+      // The wave continues past the shield, so we don't remove it
+    }
+  }
 }

@@ -17,7 +17,6 @@ class AvoidanceGame extends FlameGame with DragCallbacks, HasCollisionDetection 
   late WaveManager waveManager;
   late BlueShip blueShip;
   OrangeShip? orangeShip;
-  final List<Shield> shields = [];
   bool isGameOver = false;
   bool isPaused = false;
 
@@ -108,50 +107,6 @@ class AvoidanceGame extends FlameGame with DragCallbacks, HasCollisionDetection 
       gameSize: size,
     );
     add(orangeShip!);
-    
-    // Add shields
-    _setupShields();
-  }
-  
-  void _setupShields() {
-    // Clear existing shields
-    for (final shield in shields) {
-      shield.removeFromParent();
-    }
-    shields.clear();
-    
-    // Add shields around the play area
-    // Top shield
-    final topShield = Shield(
-      position: Vector2(size.x / 2, 50),
-      isVertical: false,
-    );
-    shields.add(topShield);
-    add(topShield);
-    
-    // Bottom shield
-    final bottomShield = Shield(
-      position: Vector2(size.x / 2, size.y - 50),
-      isVertical: false,
-    );
-    shields.add(bottomShield);
-    add(bottomShield);
-    
-    // Left shield
-    final leftShield = Shield(
-      position: Vector2(50, size.y / 2),
-      isVertical: true,
-    );
-    shields.add(leftShield);
-    add(leftShield);
-    
-    // Right shield
-    final rightShield = Shield(
-      position: Vector2(size.x - 50, size.y / 2),
-      isVertical: true,
-    );
-    shields.add(rightShield);
-    add(rightShield);
   }
 
   void _setupUltraMode() {
@@ -202,6 +157,38 @@ class AvoidanceGame extends FlameGame with DragCallbacks, HasCollisionDetection 
   void restartGame() {
     overlays.remove('gameOver');
     // The game will be recreated by the navigation
+  }
+  
+  bool areAllShieldsDestroyed() {
+    if (difficulty != Difficulty.hard) return false;
+    
+    // Check blue ship shields
+    bool blueShieldsDestroyed = true;
+    if (blueShip.leftShield != null && !blueShip.leftShield!.isDestroyed) {
+      blueShieldsDestroyed = false;
+    }
+    if (blueShip.rightShield != null && !blueShip.rightShield!.isDestroyed) {
+      blueShieldsDestroyed = false;
+    }
+    
+    // Check orange ship shields
+    bool orangeShieldsDestroyed = true;
+    if (orangeShip != null) {
+      if (orangeShip!.topShield != null && !orangeShip!.topShield!.isDestroyed) {
+        orangeShieldsDestroyed = false;
+      }
+      if (orangeShip!.bottomShield != null && !orangeShip!.bottomShield!.isDestroyed) {
+        orangeShieldsDestroyed = false;
+      }
+    }
+    
+    return blueShieldsDestroyed && orangeShieldsDestroyed;
+  }
+  
+  void checkShieldGameOver() {
+    if (difficulty == Difficulty.hard && areAllShieldsDestroyed()) {
+      gameOver();
+    }
   }
 
   @override

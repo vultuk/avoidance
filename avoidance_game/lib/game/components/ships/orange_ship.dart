@@ -10,6 +10,8 @@ import '../../avoidance_game.dart';
 class OrangeShip extends PositionComponent with DragCallbacks, CollisionCallbacks {
   final Vector2 gameSize;
   bool isDragging = false;
+  Shield? topShield;
+  Shield? bottomShield;
   
   OrangeShip({
     required Vector2 position,
@@ -26,6 +28,26 @@ class OrangeShip extends PositionComponent with DragCallbacks, CollisionCallback
     
     // Add collision detection
     add(RectangleHitbox());
+    
+    // Add shields if in Hard mode
+    final game = findParent<AvoidanceGame>();
+    if (game != null && game.difficulty == Difficulty.hard) {
+      // Top shield (protects from blue waves)
+      topShield = Shield(
+        shieldPosition: ShieldPosition.top,
+        baseColor: GameColors.blue,
+      );
+      topShield!.position = Vector2(0, -size.y/2 - GameSizes.shieldWidth/2);
+      add(topShield!);
+      
+      // Bottom shield (protects from blue waves)
+      bottomShield = Shield(
+        shieldPosition: ShieldPosition.bottom,
+        baseColor: GameColors.blue,
+      );
+      bottomShield!.position = Vector2(0, size.y/2 + GameSizes.shieldWidth/2);
+      add(bottomShield!);
+    }
   }
 
   @override
@@ -97,26 +119,10 @@ class OrangeShip extends PositionComponent with DragCallbacks, CollisionCallback
     
     // Check if collision is with a particle wave
     if (other is ParticleWave) {
-      final game = findParent<AvoidanceGame>();
-      if (game != null) {
-        // In Hard mode, check if shields can absorb the hit
-        if (game.difficulty == Difficulty.hard && game.shields.isNotEmpty) {
-          bool shieldHit = false;
-          for (final shield in game.shields) {
-            if (!shield.isDestroyed) {
-              shield.takeDamage();
-              shieldHit = true;
-              // TODO: Add screen shake and flash effects
-              break;
-            }
-          }
-          
-          // If no shields left, game over
-          if (!shieldHit) {
-            game.gameOver();
-          }
-        } else {
-          // Medium mode - direct game over
+      // Orange ship only collides with orange waves (from left)
+      if (other.color == GameColors.orange) {
+        final game = findParent<AvoidanceGame>();
+        if (game != null) {
           game.gameOver();
         }
       }

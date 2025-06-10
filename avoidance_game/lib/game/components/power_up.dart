@@ -107,13 +107,30 @@ class PowerUp extends PositionComponent with CollisionCallbacks {
     super.onCollisionStart(intersectionPoints, other);
     
     // Check if collision is with a ship
-    if (other is BlueShip || other is OrangeShip) {
-      // Restore shields
+    if (other is BlueShip) {
+      // Restore shields on blue ship
+      if (other.leftShield != null) other.leftShield!.restore();
+      if (other.rightShield != null) other.rightShield!.restore();
+      
+      // Also restore orange ship shields if it exists
       final game = findParent<AvoidanceGame>();
-      if (game != null && game.difficulty == Difficulty.hard) {
-        for (final shield in game.shields) {
-          shield.restore();
-        }
+      if (game?.orangeShip != null) {
+        if (game!.orangeShip!.topShield != null) game.orangeShip!.topShield!.restore();
+        if (game.orangeShip!.bottomShield != null) game.orangeShip!.bottomShield!.restore();
+      }
+      
+      // Remove power-up
+      removeFromParent();
+    } else if (other is OrangeShip) {
+      // Restore shields on orange ship
+      if (other.topShield != null) other.topShield!.restore();
+      if (other.bottomShield != null) other.bottomShield!.restore();
+      
+      // Also restore blue ship shields
+      final game = findParent<AvoidanceGame>();
+      if (game?.blueShip != null) {
+        if (game!.blueShip.leftShield != null) game.blueShip.leftShield!.restore();
+        if (game.blueShip.rightShield != null) game.blueShip.rightShield!.restore();
       }
       
       // Remove power-up
