@@ -2,6 +2,7 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import '../../utils/constants.dart';
 import '../components/particle_wave.dart';
+import '../components/power_up.dart';
 import '../avoidance_game.dart';
 
 class WaveManager extends Component with HasGameRef<AvoidanceGame> {
@@ -140,6 +141,13 @@ class WaveManager extends Component with HasGameRef<AvoidanceGame> {
   }
 
   void _spawnPowerUp() {
-    // TODO: Implement power-up spawning for Hard and Ultra modes
+    // Spawn power-up in the center of the screen
+    final powerUp = PowerUp(
+      position: Vector2(gameSize.x / 2, -GameSizes.powerUpSize),
+      gameSize: gameSize,
+      speed: _currentWaveSpeed * GameConstants.powerUpSpeed,
+    );
+    
+    gameRef.add(powerUp);
   }
 }

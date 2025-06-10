@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../utils/constants.dart';
 import 'components/ships/blue_ship.dart';
 import 'components/ships/orange_ship.dart';
+import 'components/shield.dart';
 import 'managers/wave_manager.dart';
 import 'managers/score_manager.dart';
 import 'screens/game_over_screen.dart';
@@ -16,6 +17,7 @@ class AvoidanceGame extends FlameGame with DragCallbacks, HasCollisionDetection 
   late WaveManager waveManager;
   late BlueShip blueShip;
   OrangeShip? orangeShip;
+  final List<Shield> shields = [];
   bool isGameOver = false;
   bool isPaused = false;
 
@@ -94,8 +96,62 @@ class AvoidanceGame extends FlameGame with DragCallbacks, HasCollisionDetection 
   }
 
   void _setupHardMode() {
-    // TODO: Implement hard mode with shields
-    _setupEasyMode(); // For now, just use easy mode
+    // Add both ships
+    blueShip = BlueShip(
+      position: Vector2(size.x / 2, size.y - 100),
+      gameSize: size,
+    );
+    add(blueShip);
+    
+    orangeShip = OrangeShip(
+      position: Vector2(100, size.y / 2),
+      gameSize: size,
+    );
+    add(orangeShip!);
+    
+    // Add shields
+    _setupShields();
+  }
+  
+  void _setupShields() {
+    // Clear existing shields
+    for (final shield in shields) {
+      shield.removeFromParent();
+    }
+    shields.clear();
+    
+    // Add shields around the play area
+    // Top shield
+    final topShield = Shield(
+      position: Vector2(size.x / 2, 50),
+      isVertical: false,
+    );
+    shields.add(topShield);
+    add(topShield);
+    
+    // Bottom shield
+    final bottomShield = Shield(
+      position: Vector2(size.x / 2, size.y - 50),
+      isVertical: false,
+    );
+    shields.add(bottomShield);
+    add(bottomShield);
+    
+    // Left shield
+    final leftShield = Shield(
+      position: Vector2(50, size.y / 2),
+      isVertical: true,
+    );
+    shields.add(leftShield);
+    add(leftShield);
+    
+    // Right shield
+    final rightShield = Shield(
+      position: Vector2(size.x - 50, size.y / 2),
+      isVertical: true,
+    );
+    shields.add(rightShield);
+    add(rightShield);
   }
 
   void _setupUltraMode() {

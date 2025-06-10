@@ -4,6 +4,7 @@ import 'package:flame/collisions.dart';
 import 'package:flutter/material.dart';
 import '../../../utils/constants.dart';
 import '../particle_wave.dart';
+import '../shield.dart';
 import '../../avoidance_game.dart';
 
 class OrangeShip extends PositionComponent with DragCallbacks, CollisionCallbacks {
@@ -96,9 +97,29 @@ class OrangeShip extends PositionComponent with DragCallbacks, CollisionCallback
     
     // Check if collision is with a particle wave
     if (other is ParticleWave) {
-      // Trigger game over for Medium mode
       final game = findParent<AvoidanceGame>();
-      game?.gameOver();
+      if (game != null) {
+        // In Hard mode, check if shields can absorb the hit
+        if (game.difficulty == Difficulty.hard && game.shields.isNotEmpty) {
+          bool shieldHit = false;
+          for (final shield in game.shields) {
+            if (!shield.isDestroyed) {
+              shield.takeDamage();
+              shieldHit = true;
+              // TODO: Add screen shake and flash effects
+              break;
+            }
+          }
+          
+          // If no shields left, game over
+          if (!shieldHit) {
+            game.gameOver();
+          }
+        } else {
+          // Medium mode - direct game over
+          game.gameOver();
+        }
+      }
     }
   }
 }

@@ -6,6 +6,11 @@ class GameColors {
   static const Color orange = Color(0xFFFF6A00);
   static const Color powerUpGreen = Color(0xFF00FF00);
   static const Color uiText = Color(0xFFFFFFFF);
+  
+  // Shield colors
+  static const Color shieldGreen = Color(0xFF00FF00);
+  static const Color shieldYellow = Color(0xFFFFFF00);
+  static const Color shieldRed = Color(0xFFFF0000);
 }
 
 class GameSizes {
