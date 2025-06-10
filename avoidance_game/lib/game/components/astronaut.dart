@@ -134,9 +134,9 @@ class Astronaut extends PositionComponent with DragCallbacks {
   
   // Fallback drag controls for testing when gyroscope isn't available
   @override
-  bool onDragUpdate(DragUpdateInfo info) {
+  bool onDragUpdate(DragUpdateEvent event) {
     // Use drag as a simple directional input
-    final dragDelta = info.delta.global;
+    final dragDelta = event.localDelta;
     final normalizedX = (dragDelta.x / 50).clamp(-1.0, 1.0);
     final normalizedY = (dragDelta.y / 50).clamp(-1.0, 1.0);
     
@@ -145,9 +145,8 @@ class Astronaut extends PositionComponent with DragCallbacks {
   }
   
   @override
-  bool onDragEnd(DragEndInfo info) {
+  void onDragEnd(DragEndEvent event) {
     // Stop acceleration when drag ends
     updateTargetVelocity(0, 0);
-    return true;
   }
 }
