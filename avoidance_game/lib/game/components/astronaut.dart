@@ -103,6 +103,11 @@ class Astronaut extends PositionComponent with DragCallbacks {
     // Apply acceleration to existing velocity for momentum-based movement
     Vector2 acceleration = Vector2(x, y) * accelerationRate;
     targetVelocity = acceleration;
+    
+    // Debug output
+    if (x != 0 || y != 0) {
+      print('Astronaut: Received velocity update x=$x, y=$y, targetVelocity=$targetVelocity');
+    }
   }
 
   @override

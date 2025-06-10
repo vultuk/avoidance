@@ -138,10 +138,12 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
     add(orangeShip!);
     
     // Add astronaut as an extra element
+    print('Ultra mode: Creating astronaut');
     astronaut = Astronaut(
       position: Vector2(size.x / 2, size.y / 2),
     );
     add(astronaut!);
+    print('Ultra mode: Astronaut added');
     
     // Add oxygen bar in HUD
     oxygenBar = OxygenBar(
@@ -151,11 +153,14 @@ class AvoidanceGame extends FlameGame with MultiTouchDragDetector, HasCollisionD
     add(oxygenBar!);
     
     // Initialize gyroscope for astronaut control
+    print('Ultra mode: Setting up gyroscope manager');
     gyroscopeManager = GyroscopeManager();
     gyroscopeManager!.onGyroscopeUpdate = (x, y) {
+      print('Ultra mode: Gyroscope callback triggered with x=$x, y=$y');
       astronaut?.updateTargetVelocity(x, y);
     };
     gyroscopeManager!.startListening();
+    print('Ultra mode: Gyroscope manager started');
   }
 
   void _addHUD() {

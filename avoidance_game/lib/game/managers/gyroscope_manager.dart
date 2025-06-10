@@ -16,6 +16,7 @@ class GyroscopeManager {
   static const double deadZone = GameConstants.gyroscopeDeadZone * (math.pi / 180);
   
   void startListening() {
+    print('GyroscopeManager: Starting accelerometer listening');
     try {
       _accelerometerSubscription = accelerometerEvents.listen(
         (AccelerometerEvent event) {
@@ -33,14 +34,24 @@ class GyroscopeManager {
           if (adjustedX.abs() < 0.1) adjustedX = 0;
           if (adjustedY.abs() < 0.1) adjustedY = 0;
           
+          // Debug output
+          if (adjustedX != 0 || adjustedY != 0) {
+            print('Accelerometer: x=$adjustedX, y=$adjustedY');
+          }
+          
           // Call the update callback
-          onGyroscopeUpdate?.call(adjustedX, adjustedY);
+          if (onGyroscopeUpdate != null) {
+            onGyroscopeUpdate!(adjustedX, adjustedY);
+          } else {
+            print('GyroscopeManager: No update callback set!');
+          }
         },
         onError: (error) {
           print('Accelerometer error: $error');
           // Accelerometer not available, do nothing
         },
       );
+      print('GyroscopeManager: Accelerometer subscription created');
     } catch (e) {
       print('Failed to initialize accelerometer: $e');
       // Accelerometer not available, do nothing
