@@ -17,8 +17,10 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
   late AnimationController _titleController;
   late AnimationController _floatController;
   late AnimationController _pulseController;
+  late AnimationController _subtitleController;
   late Animation<double> _titleScale;
   late Animation<double> _titleGlow;
+  late Animation<double> _subtitleOpacity;
   late List<AnimationController> _buttonControllers;
   late List<Animation<double>> _buttonAnimations;
   
@@ -57,6 +59,20 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
       curve: Curves.easeInOut,
     ));
     
+    // Subtitle animation
+    _subtitleController = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    );
+    
+    _subtitleOpacity = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _subtitleController,
+      curve: Curves.easeIn,
+    ));
+    
     // Float animation for decorative elements
     _floatController = AnimationController(
       duration: const Duration(seconds: 4),
@@ -90,6 +106,9 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
     
     // Start animations
     _titleController.forward();
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      _subtitleController.forward();
+    });
     Future.delayed(const Duration(milliseconds: 300), () {
       for (var controller in _buttonControllers) {
         controller.forward();
@@ -114,6 +133,7 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
     _titleController.dispose();
     _floatController.dispose();
     _pulseController.dispose();
+    _subtitleController.dispose();
     for (var controller in _buttonControllers) {
       controller.dispose();
     }
@@ -257,6 +277,21 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
       backgroundColor: GameColors.background,
       body: Stack(
         children: [
+          // Enhanced gradient background
+          Container(
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                center: Alignment.center,
+                radius: 1.5,
+                colors: [
+                  GameColors.background,
+                  GameColors.background.withBlue(20),
+                  GameColors.background.withBlue(10),
+                ],
+              ),
+            ),
+          ),
+          
           // Animated star field background
           AnimatedBuilder(
             animation: _starController,
@@ -284,242 +319,385 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
             },
           ),
           
+          // Vignette effect
+          Container(
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                center: Alignment.center,
+                radius: 1.0,
+                colors: [
+                  Colors.transparent,
+                  Colors.black.withOpacity(0.3),
+                ],
+              ),
+            ),
+          ),
+          
           // Menu content
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Animated title
-                AnimatedBuilder(
-                  animation: _titleController,
-                  builder: (context, child) {
-                    return Transform.scale(
-                      scale: _titleScale.value,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            // Glow effect
-                            if (_titleGlow.value > 0.5)
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                                decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: GameColors.blue.withOpacity(_titleGlow.value * 0.3),
-                                      blurRadius: 30,
-                                      spreadRadius: 10,
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 20),
+                    
+                    // Animated title with enhanced effects
+                    AnimatedBuilder(
+                      animation: _titleController,
+                      builder: (context, child) {
+                        return Transform.scale(
+                          scale: _titleScale.value,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                // Multiple glow layers
+                                if (_titleGlow.value > 0.3)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 30),
+                                    decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: GameColors.blue.withOpacity(_titleGlow.value * 0.2),
+                                          blurRadius: 60,
+                                          spreadRadius: 20,
+                                        ),
+                                        BoxShadow(
+                                          color: GameColors.orange.withOpacity(_titleGlow.value * 0.1),
+                                          blurRadius: 40,
+                                          spreadRadius: 10,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                
+                                // Title with enhanced styling
+                                Column(
+                                  children: [
+                                    ShaderMask(
+                                      shaderCallback: (bounds) {
+                                        return LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                          colors: [
+                                            GameColors.blue,
+                                            GameColors.uiText,
+                                            GameColors.orange,
+                                          ],
+                                          stops: [
+                                            0.0,
+                                            0.5 + math.sin(_pulseController.value * math.pi) * 0.2,
+                                            1.0,
+                                          ],
+                                        ).createShader(bounds);
+                                      },
+                                      child: const Text(
+                                        'AVOIDANCE',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 64,
+                                          fontWeight: FontWeight.w900,
+                                          letterSpacing: 8,
+                                          shadows: [
+                                            Shadow(
+                                              offset: Offset(0, 4),
+                                              blurRadius: 20,
+                                              color: Colors.black54,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    
+                                    // Subtitle
+                                    AnimatedBuilder(
+                                      animation: _subtitleController,
+                                      builder: (context, child) {
+                                        return Opacity(
+                                          opacity: _subtitleOpacity.value,
+                                          child: Container(
+                                            margin: const EdgeInsets.only(top: 8),
+                                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                color: GameColors.blue.withOpacity(0.3),
+                                                width: 1,
+                                              ),
+                                              borderRadius: BorderRadius.circular(20),
+                                            ),
+                                            child: Text(
+                                              'SURVIVE THE COSMIC CHAOS',
+                                              style: TextStyle(
+                                                color: GameColors.uiText.withOpacity(0.8),
+                                                fontSize: 14,
+                                                letterSpacing: 2,
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     ),
                                   ],
                                 ),
-                              ),
-                            // Title text
-                            ShaderMask(
-                              shaderCallback: (bounds) {
-                                return LinearGradient(
-                                  colors: [
-                                    GameColors.blue,
-                                    GameColors.uiText,
-                                    GameColors.blue,
-                                  ],
-                                  stops: [
-                                    0.0,
-                                    0.5 + math.sin(_pulseController.value * math.pi) * 0.2,
-                                    1.0,
-                                  ],
-                                ).createShader(bounds);
-                              },
-                              child: const Text(
-                                'AVOIDANCE',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 56,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 6,
-                                ),
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                
-                const SizedBox(height: 60),
-                
-                // Animated difficulty buttons in 2x2 grid
-                Column(
-                  children: [
-                    // First row (Easy, Medium)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AnimatedBuilder(
-                          animation: _buttonAnimations[0],
-                          builder: (context, child) {
-                            return Transform.translate(
-                              offset: Offset(_buttonAnimations[0].value * 300, 0),
-                              child: _EnhancedMenuButton(
-                                text: Difficulty.easy.displayName,
-                                color: GameColors.blue,
-                                onPressed: () => _startGame(Difficulty.easy),
-                                isHovered: _hoveredButtonIndex == 0,
-                                onHover: (hover) {
-                                  setState(() {
-                                    _hoveredButtonIndex = hover ? 0 : -1;
-                                  });
-                                },
-                                difficultyLevel: 1,
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(width: 20),
-                        AnimatedBuilder(
-                          animation: _buttonAnimations[1],
-                          builder: (context, child) {
-                            return Transform.translate(
-                              offset: Offset(-_buttonAnimations[1].value * 300, 0),
-                              child: _EnhancedMenuButton(
-                                text: Difficulty.medium.displayName,
-                                color: GameColors.orange,
-                                onPressed: () => _startGame(Difficulty.medium),
-                                isHovered: _hoveredButtonIndex == 1,
-                                onHover: (hover) {
-                                  setState(() {
-                                    _hoveredButtonIndex = hover ? 1 : -1;
-                                  });
-                                },
-                                difficultyLevel: 2,
-                              ),
-                            );
-                          },
-                        ),
-                      ],
+                          ),
+                        );
+                      },
                     ),
+                    
+                    const SizedBox(height: 40),
+                    
+                    // Difficulty selection label
+                    AnimatedBuilder(
+                      animation: _buttonAnimations[0],
+                      builder: (context, child) {
+                        return Opacity(
+                          opacity: (_buttonAnimations[0].value + 1).clamp(0.0, 1.0),
+                          child: Text(
+                            'SELECT DIFFICULTY',
+                            style: TextStyle(
+                              color: GameColors.uiText.withOpacity(0.6),
+                              fontSize: 12,
+                              letterSpacing: 3,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    
                     const SizedBox(height: 20),
-                    // Second row (Hard, Ultra)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AnimatedBuilder(
-                          animation: _buttonAnimations[2],
-                          builder: (context, child) {
-                            return Transform.translate(
-                              offset: Offset(_buttonAnimations[2].value * 300, 0),
-                              child: _EnhancedMenuButton(
-                                text: Difficulty.hard.displayName,
-                                color: GameColors.blue,
-                                onPressed: () => _startGame(Difficulty.hard),
-                                isHovered: _hoveredButtonIndex == 2,
-                                onHover: (hover) {
-                                  setState(() {
-                                    _hoveredButtonIndex = hover ? 2 : -1;
-                                  });
+                    
+                    // Animated difficulty buttons in 2x2 grid with enhanced styling
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        children: [
+                          // First row (Easy, Medium)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              AnimatedBuilder(
+                                animation: _buttonAnimations[0],
+                                builder: (context, child) {
+                                  return Transform.translate(
+                                    offset: Offset(_buttonAnimations[0].value * 300, 0),
+                                    child: Opacity(
+                                      opacity: (_buttonAnimations[0].value + 1).clamp(0.0, 1.0),
+                                      child: _EnhancedMenuButton(
+                                        text: Difficulty.easy.displayName,
+                                        color: GameColors.blue,
+                                        onPressed: () => _startGame(Difficulty.easy),
+                                        isHovered: _hoveredButtonIndex == 0,
+                                        onHover: (hover) {
+                                          setState(() {
+                                            _hoveredButtonIndex = hover ? 0 : -1;
+                                          });
+                                        },
+                                        difficultyLevel: 1,
+                                        description: 'Single ship • Blue waves',
+                                      ),
+                                    ),
+                                  );
                                 },
-                                difficultyLevel: 3,
                               ),
-                            );
-                          },
-                        ),
-                        const SizedBox(width: 20),
-                        AnimatedBuilder(
-                          animation: _buttonAnimations[3],
-                          builder: (context, child) {
-                            return Transform.translate(
-                              offset: Offset(-_buttonAnimations[3].value * 300, 0),
-                              child: _EnhancedMenuButton(
-                                text: Difficulty.ultra.displayName,
-                                color: GameColors.orange,
-                                onPressed: () => _startGame(Difficulty.ultra),
-                                isHovered: _hoveredButtonIndex == 3,
-                                onHover: (hover) {
-                                  setState(() {
-                                    _hoveredButtonIndex = hover ? 3 : -1;
-                                  });
+                              const SizedBox(width: 16),
+                              AnimatedBuilder(
+                                animation: _buttonAnimations[1],
+                                builder: (context, child) {
+                                  return Transform.translate(
+                                    offset: Offset(-_buttonAnimations[1].value * 300, 0),
+                                    child: Opacity(
+                                      opacity: (_buttonAnimations[1].value + 1).clamp(0.0, 1.0),
+                                      child: _EnhancedMenuButton(
+                                        text: Difficulty.medium.displayName,
+                                        color: GameColors.orange,
+                                        onPressed: () => _startGame(Difficulty.medium),
+                                        isHovered: _hoveredButtonIndex == 1,
+                                        onHover: (hover) {
+                                          setState(() {
+                                            _hoveredButtonIndex = hover ? 1 : -1;
+                                          });
+                                        },
+                                        difficultyLevel: 2,
+                                        description: 'Two ships • Multi waves',
+                                      ),
+                                    ),
+                                  );
                                 },
-                                difficultyLevel: 4,
                               ),
-                            );
-                          },
-                        ),
-                      ],
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          // Second row (Hard, Ultra)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              AnimatedBuilder(
+                                animation: _buttonAnimations[2],
+                                builder: (context, child) {
+                                  return Transform.translate(
+                                    offset: Offset(_buttonAnimations[2].value * 300, 0),
+                                    child: Opacity(
+                                      opacity: (_buttonAnimations[2].value + 1).clamp(0.0, 1.0),
+                                      child: _EnhancedMenuButton(
+                                        text: Difficulty.hard.displayName,
+                                        color: GameColors.blue,
+                                        onPressed: () => _startGame(Difficulty.hard),
+                                        isHovered: _hoveredButtonIndex == 2,
+                                        onHover: (hover) {
+                                          setState(() {
+                                            _hoveredButtonIndex = hover ? 2 : -1;
+                                          });
+                                        },
+                                        difficultyLevel: 3,
+                                        description: 'Shields • Power-ups',
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                              const SizedBox(width: 16),
+                              AnimatedBuilder(
+                                animation: _buttonAnimations[3],
+                                builder: (context, child) {
+                                  return Transform.translate(
+                                    offset: Offset(-_buttonAnimations[3].value * 300, 0),
+                                    child: Opacity(
+                                      opacity: (_buttonAnimations[3].value + 1).clamp(0.0, 1.0),
+                                      child: _EnhancedMenuButton(
+                                        text: Difficulty.ultra.displayName,
+                                        color: GameColors.orange,
+                                        onPressed: () => _startGame(Difficulty.ultra),
+                                        isHovered: _hoveredButtonIndex == 3,
+                                        onHover: (hover) {
+                                          setState(() {
+                                            _hoveredButtonIndex = hover ? 3 : -1;
+                                          });
+                                        },
+                                        difficultyLevel: 4,
+                                        description: 'Astronaut • Oxygen',
+                                        isUltra: true,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-                
-                const SizedBox(height: 40),
-                
-                // Bottom buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+                    
+                    const SizedBox(height: 50),
+                    
+                    // Divider
                     AnimatedBuilder(
                       animation: _buttonAnimations[4],
                       builder: (context, child) {
-                        return Transform.translate(
-                          offset: Offset(0, -_buttonAnimations[4].value * 100),
-                          child: _EnhancedMenuButton(
-                            text: 'LEADERBOARD',
-                            color: GameColors.uiText,
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                  pageBuilder: (context, animation, secondaryAnimation) =>
-                                      const LeaderboardScreen(),
-                                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                    return SlideTransition(
-                                      position: Tween<Offset>(
-                                        begin: const Offset(1.0, 0.0),
-                                        end: Offset.zero,
-                                      ).animate(CurvedAnimation(
-                                        parent: animation,
-                                        curve: Curves.easeOutCubic,
-                                      )),
-                                      child: child,
+                        return Opacity(
+                          opacity: (_buttonAnimations[4].value + 1).clamp(0.0, 1.0),
+                          child: Container(
+                            width: 200,
+                            height: 1,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.transparent,
+                                  GameColors.uiText.withOpacity(0.3),
+                                  Colors.transparent,
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    
+                    const SizedBox(height: 20),
+                    
+                    // Bottom buttons with icons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        AnimatedBuilder(
+                          animation: _buttonAnimations[4],
+                          builder: (context, child) {
+                            return Transform.translate(
+                              offset: Offset(0, -_buttonAnimations[4].value * 100),
+                              child: Opacity(
+                                opacity: (_buttonAnimations[4].value + 1).clamp(0.0, 1.0),
+                                child: _IconMenuButton(
+                                  icon: Icons.leaderboard,
+                                  text: 'LEADERBOARD',
+                                  color: GameColors.uiText,
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        pageBuilder: (context, animation, secondaryAnimation) =>
+                                            const LeaderboardScreen(),
+                                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                          return SlideTransition(
+                                            position: Tween<Offset>(
+                                              begin: const Offset(1.0, 0.0),
+                                              end: Offset.zero,
+                                            ).animate(CurvedAnimation(
+                                              parent: animation,
+                                              curve: Curves.easeOutCubic,
+                                            )),
+                                            child: child,
+                                          );
+                                        },
+                                      ),
                                     );
                                   },
+                                  isHovered: _hoveredButtonIndex == 4,
+                                  onHover: (hover) {
+                                    setState(() {
+                                      _hoveredButtonIndex = hover ? 4 : -1;
+                                    });
+                                  },
                                 ),
-                              );
-                            },
-                            isHovered: _hoveredButtonIndex == 4,
-                            onHover: (hover) {
-                              setState(() {
-                                _hoveredButtonIndex = hover ? 4 : -1;
-                              });
-                            },
-                            isSmall: true,
-                          ),
-                        );
-                      },
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(width: 16),
+                        AnimatedBuilder(
+                          animation: _buttonAnimations[5],
+                          builder: (context, child) {
+                            return Transform.translate(
+                              offset: Offset(0, -_buttonAnimations[5].value * 100),
+                              child: Opacity(
+                                opacity: (_buttonAnimations[5].value + 1).clamp(0.0, 1.0),
+                                child: _IconMenuButton(
+                                  icon: Icons.emoji_events,
+                                  text: 'HIGH SCORES',
+                                  color: GameColors.uiText,
+                                  onPressed: _showHighScores,
+                                  isHovered: _hoveredButtonIndex == 5,
+                                  onHover: (hover) {
+                                    setState(() {
+                                      _hoveredButtonIndex = hover ? 5 : -1;
+                                    });
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 20),
-                    AnimatedBuilder(
-                      animation: _buttonAnimations[5],
-                      builder: (context, child) {
-                        return Transform.translate(
-                          offset: Offset(0, -_buttonAnimations[5].value * 100),
-                          child: _EnhancedMenuButton(
-                            text: 'HIGH SCORES',
-                            color: GameColors.uiText,
-                            onPressed: _showHighScores,
-                            isHovered: _hoveredButtonIndex == 5,
-                            onHover: (hover) {
-                              setState(() {
-                                _hoveredButtonIndex = hover ? 5 : -1;
-                              });
-                            },
-                            isSmall: true,
-                          ),
-                        );
-                      },
-                    ),
+                    
+                    const SizedBox(height: 30),
                   ],
                 ),
-              ],
+              ),
             ),
           ),
         ],
@@ -534,8 +712,9 @@ class _EnhancedMenuButton extends StatefulWidget {
   final VoidCallback onPressed;
   final bool isHovered;
   final Function(bool) onHover;
-  final bool isSmall;
   final int? difficultyLevel;
+  final String? description;
+  final bool isUltra;
 
   const _EnhancedMenuButton({
     required this.text,
@@ -543,8 +722,9 @@ class _EnhancedMenuButton extends StatefulWidget {
     required this.onPressed,
     required this.isHovered,
     required this.onHover,
-    this.isSmall = false,
     this.difficultyLevel,
+    this.description,
+    this.isUltra = false,
   });
 
   @override
@@ -567,7 +747,7 @@ class _EnhancedMenuButtonState extends State<_EnhancedMenuButton>
     
     _scaleAnimation = Tween<double>(
       begin: 1.0,
-      end: 1.1,
+      end: 1.05,
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeOutCubic,
@@ -600,9 +780,6 @@ class _EnhancedMenuButtonState extends State<_EnhancedMenuButton>
 
   @override
   Widget build(BuildContext context) {
-    final width = widget.isSmall ? GameSizes.buttonWidth : GameSizes.buttonWidth * 1.3;
-    final height = widget.isSmall ? GameSizes.buttonHeight : GameSizes.buttonHeight * 1.2;
-    
     return MouseRegion(
       onEnter: (_) => widget.onHover(true),
       onExit: (_) => widget.onHover(false),
@@ -612,85 +789,242 @@ class _EnhancedMenuButtonState extends State<_EnhancedMenuButton>
           return Transform.scale(
             scale: _scaleAnimation.value,
             child: Container(
-              width: width,
-              height: height,
+              width: 160,
+              height: 100,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: widget.color.withOpacity(0.3 * _glowAnimation.value),
+                    color: widget.color.withOpacity(0.2 * _glowAnimation.value),
                     blurRadius: 20 * _glowAnimation.value,
-                    spreadRadius: 5 * _glowAnimation.value,
+                    spreadRadius: 2 * _glowAnimation.value,
+                  ),
+                  const BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
                   ),
                 ],
               ),
-              child: Stack(
-                children: [
-                  // Background gradient
-                  Container(
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: widget.onPressed,
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16),
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          widget.color.withOpacity(0.1),
+                          widget.color.withOpacity(0.15),
                           widget.color.withOpacity(0.05),
                         ],
                       ),
-                    ),
-                  ),
-                  
-                  // Button
-                  OutlinedButton(
-                    onPressed: widget.onPressed,
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(
-                        color: widget.color,
-                        width: 2 + _glowAnimation.value,
+                      border: Border.all(
+                        color: widget.color.withOpacity(0.8 + 0.2 * _glowAnimation.value),
+                        width: 2,
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      backgroundColor: Colors.transparent,
                     ),
                     child: Stack(
-                      alignment: Alignment.center,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (widget.difficultyLevel != null) ...[
-                              Row(
-                                children: List.generate(
-                                  widget.difficultyLevel!,
-                                  (index) => Padding(
-                                    padding: const EdgeInsets.only(right: 4),
-                                    child: Icon(
-                                      Icons.star,
-                                      size: 12,
-                                      color: widget.color.withOpacity(0.7),
+                        // Ultra badge
+                        if (widget.isUltra)
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: GameColors.orange.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: GameColors.orange.withOpacity(0.5),
+                                  width: 1,
+                                ),
+                              ),
+                              child: const Text(
+                                'NEW',
+                                style: TextStyle(
+                                  color: GameColors.orange,
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                            ),
+                          ),
+                        
+                        // Main content
+                        Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // Difficulty stars
+                              if (widget.difficultyLevel != null)
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: List.generate(
+                                    4,
+                                    (index) => Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                                      child: Icon(
+                                        index < widget.difficultyLevel! ? Icons.star : Icons.star_border,
+                                        size: 10,
+                                        color: widget.color.withOpacity(0.6),
+                                      ),
                                     ),
                                   ),
                                 ),
+                              const SizedBox(height: 4),
+                              
+                              // Title
+                              Text(
+                                widget.text,
+                                style: TextStyle(
+                                  color: widget.color,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 2,
+                                ),
                               ),
-                              const SizedBox(width: 8),
+                              
+                              // Description
+                              if (widget.description != null) ...[
+                                const SizedBox(height: 4),
+                                Text(
+                                  widget.description!,
+                                  style: TextStyle(
+                                    color: widget.color.withOpacity(0.6),
+                                    fontSize: 10,
+                                    letterSpacing: 0.5,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
                             ],
-                            Text(
-                              widget.text,
-                              style: TextStyle(
-                                color: widget.color,
-                                fontSize: widget.isSmall ? 16 : GameSizes.fontSize + 2,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: widget.isSmall ? 1 : 2,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _IconMenuButton extends StatefulWidget {
+  final IconData icon;
+  final String text;
+  final Color color;
+  final VoidCallback onPressed;
+  final bool isHovered;
+  final Function(bool) onHover;
+
+  const _IconMenuButton({
+    required this.icon,
+    required this.text,
+    required this.color,
+    required this.onPressed,
+    required this.isHovered,
+    required this.onHover,
+  });
+
+  @override
+  State<_IconMenuButton> createState() => _IconMenuButtonState();
+}
+
+class _IconMenuButtonState extends State<_IconMenuButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.1,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutCubic,
+    ));
+  }
+
+  @override
+  void didUpdateWidget(_IconMenuButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isHovered && !oldWidget.isHovered) {
+      _controller.forward();
+    } else if (!widget.isHovered && oldWidget.isHovered) {
+      _controller.reverse();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => widget.onHover(true),
+      onExit: (_) => widget.onHover(false),
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: _scaleAnimation.value,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: widget.onPressed,
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: widget.color.withOpacity(0.5),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        widget.icon,
+                        color: widget.color.withOpacity(0.8),
+                        size: 18,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        widget.text,
+                        style: TextStyle(
+                          color: widget.color.withOpacity(0.9),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           );
@@ -829,11 +1163,11 @@ class FloatingParticlesPainter extends CustomPainter {
       final y = ((particle.y + animationValue * particle.speed) % 1.2 - 0.1) * size.height;
       
       final pulse = math.sin(pulseValue * math.pi) * 0.3 + 0.7;
-      paint.color = particle.color.withOpacity(0.1 * pulse);
+      paint.color = particle.color.withOpacity(0.05 * pulse);
       
       // Draw blurred particle
       for (int i = 3; i > 0; i--) {
-        paint.color = particle.color.withOpacity(0.02 * pulse * i);
+        paint.color = particle.color.withOpacity(0.015 * pulse * i);
         canvas.drawCircle(
           Offset(x, y),
           particle.size * pulse * (1 + i * 0.3),
