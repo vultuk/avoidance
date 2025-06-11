@@ -185,3 +185,30 @@ on my phone, the astronaut is still not moving. Just sits there in the middle of
 
 ## Update Files Request
 Please make sure that @prompts.md and @todo.md are fully updated
+
+## Main Menu Enhancement Request
+Lets have a look at the main menu for the game. We need it to look really striking and fun
+
+## Commit Version Push Reminder
+Remember to commit, push and create a version
+
+## Menu Particles Too Fast & Ultra Button Missing
+the background particles onnthe new menu move WAY too fast. lets slow them down. also i cant see the ultra move button any more. maybe it needs to be 2 columns and 2 rows of difficulty selection.
+
+## Commit Version Push Always
+commit version push always please
+
+## Menu Text Overflow & Starfield Speed
+leader board abd high score text on the menu comes out of the buttons as its too long. text for these should be smaller and fit inside the buttons. also the moving space look in the back.of the main menu is stiol.too fast. it shoikd be cloaer to.the speed of the space in the game itself
+
+## Commit Version Push Always 2
+commit version push always please
+
+## Menu Screenshot Review
+Here's a screenshot of how the main menu looks. Have a look and see how you can improve it.  https://i.postimg.cc/fTh3tRQq/Screenshot-20250611-100011.jpg
+
+## Commit Version Push Please
+commit, version push please
+
+## Update Prompts File
+Make sure you also update @prompts.md
