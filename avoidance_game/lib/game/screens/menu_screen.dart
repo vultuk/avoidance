@@ -349,37 +349,106 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
                 
                 const SizedBox(height: 60),
                 
-                // Animated difficulty buttons
-                ...Difficulty.values.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final difficulty = entry.value;
-                  
-                  return AnimatedBuilder(
-                    animation: _buttonAnimations[index],
-                    builder: (context, child) {
-                      return Transform.translate(
-                        offset: Offset(_buttonAnimations[index].value * 300, 0),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          child: _EnhancedMenuButton(
-                            text: difficulty.displayName,
-                            color: difficulty == Difficulty.easy || difficulty == Difficulty.hard
-                                ? GameColors.blue
-                                : GameColors.orange,
-                            onPressed: () => _startGame(difficulty),
-                            isHovered: _hoveredButtonIndex == index,
-                            onHover: (hover) {
-                              setState(() {
-                                _hoveredButtonIndex = hover ? index : -1;
-                              });
-                            },
-                            difficultyLevel: index + 1,
-                          ),
+                // Animated difficulty buttons in 2x2 grid
+                Column(
+                  children: [
+                    // First row (Easy, Medium)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        AnimatedBuilder(
+                          animation: _buttonAnimations[0],
+                          builder: (context, child) {
+                            return Transform.translate(
+                              offset: Offset(_buttonAnimations[0].value * 300, 0),
+                              child: _EnhancedMenuButton(
+                                text: Difficulty.easy.displayName,
+                                color: GameColors.blue,
+                                onPressed: () => _startGame(Difficulty.easy),
+                                isHovered: _hoveredButtonIndex == 0,
+                                onHover: (hover) {
+                                  setState(() {
+                                    _hoveredButtonIndex = hover ? 0 : -1;
+                                  });
+                                },
+                                difficultyLevel: 1,
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  );
-                }),
+                        const SizedBox(width: 20),
+                        AnimatedBuilder(
+                          animation: _buttonAnimations[1],
+                          builder: (context, child) {
+                            return Transform.translate(
+                              offset: Offset(-_buttonAnimations[1].value * 300, 0),
+                              child: _EnhancedMenuButton(
+                                text: Difficulty.medium.displayName,
+                                color: GameColors.orange,
+                                onPressed: () => _startGame(Difficulty.medium),
+                                isHovered: _hoveredButtonIndex == 1,
+                                onHover: (hover) {
+                                  setState(() {
+                                    _hoveredButtonIndex = hover ? 1 : -1;
+                                  });
+                                },
+                                difficultyLevel: 2,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    // Second row (Hard, Ultra)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        AnimatedBuilder(
+                          animation: _buttonAnimations[2],
+                          builder: (context, child) {
+                            return Transform.translate(
+                              offset: Offset(_buttonAnimations[2].value * 300, 0),
+                              child: _EnhancedMenuButton(
+                                text: Difficulty.hard.displayName,
+                                color: GameColors.blue,
+                                onPressed: () => _startGame(Difficulty.hard),
+                                isHovered: _hoveredButtonIndex == 2,
+                                onHover: (hover) {
+                                  setState(() {
+                                    _hoveredButtonIndex = hover ? 2 : -1;
+                                  });
+                                },
+                                difficultyLevel: 3,
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(width: 20),
+                        AnimatedBuilder(
+                          animation: _buttonAnimations[3],
+                          builder: (context, child) {
+                            return Transform.translate(
+                              offset: Offset(-_buttonAnimations[3].value * 300, 0),
+                              child: _EnhancedMenuButton(
+                                text: Difficulty.ultra.displayName,
+                                color: GameColors.orange,
+                                onPressed: () => _startGame(Difficulty.ultra),
+                                isHovered: _hoveredButtonIndex == 3,
+                                onHover: (hover) {
+                                  setState(() {
+                                    _hoveredButtonIndex = hover ? 3 : -1;
+                                  });
+                                },
+                                difficultyLevel: 4,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
                 
                 const SizedBox(height: 40),
                 
@@ -531,7 +600,7 @@ class _EnhancedMenuButtonState extends State<_EnhancedMenuButton>
 
   @override
   Widget build(BuildContext context) {
-    final width = widget.isSmall ? GameSizes.buttonWidth : GameSizes.buttonWidth * 1.5;
+    final width = widget.isSmall ? GameSizes.buttonWidth : GameSizes.buttonWidth * 1.3;
     final height = widget.isSmall ? GameSizes.buttonHeight : GameSizes.buttonHeight * 1.2;
     
     return MouseRegion(
@@ -742,7 +811,7 @@ class FloatingParticlesPainter extends CustomPainter {
           x: random.nextDouble(),
           y: random.nextDouble(),
           size: random.nextDouble() * 30 + 20,
-          speed: random.nextDouble() * 0.2 + 0.1,
+          speed: random.nextDouble() * 0.05 + 0.02,
           color: random.nextBool() ? GameColors.blue : GameColors.orange,
           offsetPhase: random.nextDouble() * math.pi * 2,
         ));
