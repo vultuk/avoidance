@@ -227,3 +227,6 @@ Looks amazing, but the scores go off screen and it's not possible to scroll. I t
 
 ## High Scores 2x2 Grid Layout
 It's better, but I think maybe there should be 2 columns and 2 rows showing the scores. Here's the screnshot. What do you think? - https://i.postimg.cc/fWKY7dWS/Screenshot-20250611-110927.jpg
+
+## Keep High Scores On Screen
+I'd just really like you to keep everything on screen and in the frame - https://i.postimg.cc/tT77hsBW/Screenshot-20250611-111920.jpg
