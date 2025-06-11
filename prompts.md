@@ -224,3 +224,6 @@ Please can you clean up the Highest Score screen. Make it look amazing. Here's h
 
 ## High Scores Dialog Going Off Screen
 Looks amazing, but the scores go off screen and it's not possible to scroll. I think they need to all be visible at once, no scrolling and no going off screen. Please see this image so you understand - https://i.postimg.cc/jqWMZv9n/Screenshot-20250611-105346.jpg
+
+## High Scores 2x2 Grid Layout
+It's better, but I think maybe there should be 2 columns and 2 rows showing the scores. Here's the screnshot. What do you think? - https://i.postimg.cc/fWKY7dWS/Screenshot-20250611-110927.jpg

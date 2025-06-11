@@ -1404,8 +1404,8 @@ class _HighScoresDialogState extends State<_HighScoresDialog>
             elevation: 0,
             insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 60),
             child: Container(
-              width: 350,
               constraints: BoxConstraints(
+                maxWidth: 450,
                 maxHeight: MediaQuery.of(context).size.height * 0.85,
               ),
               decoration: BoxDecoration(
@@ -1502,41 +1502,108 @@ class _HighScoresDialogState extends State<_HighScoresDialog>
                           },
                         ),
                         
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 20),
                         
-                        // Score entries
-                        ...Difficulty.values.asMap().entries.map((entry) {
-                          final index = entry.key;
-                          final difficulty = entry.value;
-                          final score = widget.highScores[difficulty] ?? 0;
-                          final color = difficulty == Difficulty.easy || difficulty == Difficulty.hard
-                              ? GameColors.blue
-                              : GameColors.orange;
-                          
-                          return AnimatedBuilder(
-                            animation: _scoreAnimations[index],
-                            builder: (context, child) {
-                              return Transform.translate(
-                                offset: Offset(
-                                  (1 - _scoreAnimations[index].value) * 50, 
-                                  0,
-                                ),
-                                child: Opacity(
-                                  opacity: _scoreAnimations[index].value,
-                                  child: _HighScoreEntry(
-                                    difficulty: difficulty,
-                                    score: score,
-                                    color: color,
-                                    rank: index + 1,
-                                    isHighest: score == bestScore && score > 0,
-                                    animationValue: _scoreController.value,
-                                    compact: true,
+                        // Score entries in 2x2 grid
+                        Column(
+                          children: [
+                            // First row (Easy, Medium)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: AnimatedBuilder(
+                                    animation: _scoreAnimations[0],
+                                    builder: (context, child) {
+                                      return Transform.scale(
+                                        scale: _scoreAnimations[0].value,
+                                        child: Opacity(
+                                          opacity: _scoreAnimations[0].value,
+                                          child: _HighScoreGridEntry(
+                                            difficulty: Difficulty.easy,
+                                            score: widget.highScores[Difficulty.easy] ?? 0,
+                                            color: GameColors.blue,
+                                            isHighest: (widget.highScores[Difficulty.easy] ?? 0) == bestScore && bestScore > 0,
+                                            animationValue: _scoreController.value,
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
-                              );
-                            },
-                          );
-                        }),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: AnimatedBuilder(
+                                    animation: _scoreAnimations[1],
+                                    builder: (context, child) {
+                                      return Transform.scale(
+                                        scale: _scoreAnimations[1].value,
+                                        child: Opacity(
+                                          opacity: _scoreAnimations[1].value,
+                                          child: _HighScoreGridEntry(
+                                            difficulty: Difficulty.medium,
+                                            score: widget.highScores[Difficulty.medium] ?? 0,
+                                            color: GameColors.orange,
+                                            isHighest: (widget.highScores[Difficulty.medium] ?? 0) == bestScore && bestScore > 0,
+                                            animationValue: _scoreController.value,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            // Second row (Hard, Ultra)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: AnimatedBuilder(
+                                    animation: _scoreAnimations[2],
+                                    builder: (context, child) {
+                                      return Transform.scale(
+                                        scale: _scoreAnimations[2].value,
+                                        child: Opacity(
+                                          opacity: _scoreAnimations[2].value,
+                                          child: _HighScoreGridEntry(
+                                            difficulty: Difficulty.hard,
+                                            score: widget.highScores[Difficulty.hard] ?? 0,
+                                            color: GameColors.blue,
+                                            isHighest: (widget.highScores[Difficulty.hard] ?? 0) == bestScore && bestScore > 0,
+                                            animationValue: _scoreController.value,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: AnimatedBuilder(
+                                    animation: _scoreAnimations[3],
+                                    builder: (context, child) {
+                                      return Transform.scale(
+                                        scale: _scoreAnimations[3].value,
+                                        child: Opacity(
+                                          opacity: _scoreAnimations[3].value,
+                                          child: _HighScoreGridEntry(
+                                            difficulty: Difficulty.ultra,
+                                            score: widget.highScores[Difficulty.ultra] ?? 0,
+                                            color: GameColors.orange,
+                                            isHighest: (widget.highScores[Difficulty.ultra] ?? 0) == bestScore && bestScore > 0,
+                                            animationValue: _scoreController.value,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                         
                         const SizedBox(height: 16),
                         
@@ -1804,6 +1871,163 @@ class _HighScoreEntry extends StatelessWidget {
                 ],
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// High Score Grid Entry Widget
+class _HighScoreGridEntry extends StatelessWidget {
+  final Difficulty difficulty;
+  final int score;
+  final Color color;
+  final bool isHighest;
+  final double animationValue;
+
+  const _HighScoreGridEntry({
+    required this.difficulty,
+    required this.score,
+    required this.color,
+    required this.isHighest,
+    required this.animationValue,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 120,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            color.withOpacity(isHighest ? 0.15 : 0.08),
+            color.withOpacity(isHighest ? 0.08 : 0.02),
+          ],
+        ),
+        border: Border.all(
+          color: color.withOpacity(isHighest ? 0.8 : 0.3),
+          width: isHighest ? 2 : 1,
+        ),
+        boxShadow: isHighest ? [
+          BoxShadow(
+            color: color.withOpacity(0.2),
+            blurRadius: 15,
+            spreadRadius: 2,
+          ),
+        ] : null,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {},
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Difficulty with stars
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ...List.generate(
+                      4,
+                      (index) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 1),
+                        child: Icon(
+                          index < difficulty.index + 1 ? Icons.star : Icons.star_border,
+                          size: 10,
+                          color: color.withOpacity(0.6),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                
+                // Difficulty name
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      difficulty.displayName,
+                      style: TextStyle(
+                        color: color,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    if (isHighest && score > 0) ...[
+                      const SizedBox(width: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                          vertical: 1,
+                        ),
+                        decoration: BoxDecoration(
+                          color: GameColors.orange.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: GameColors.orange.withOpacity(0.5),
+                            width: 1,
+                          ),
+                        ),
+                        child: const Text(
+                          'BEST',
+                          style: TextStyle(
+                            color: GameColors.orange,
+                            fontSize: 6,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                
+                const SizedBox(height: 8),
+                
+                // Score
+                AnimatedBuilder(
+                  animation: AlwaysStoppedAnimation(animationValue),
+                  builder: (context, child) {
+                    final displayScore = (score * animationValue).round();
+                    return Text(
+                      displayScore.toString().padLeft(6, '0'),
+                      style: TextStyle(
+                        color: color,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'monospace',
+                        letterSpacing: 2,
+                        shadows: [
+                          Shadow(
+                            color: color.withOpacity(0.5),
+                            blurRadius: 10,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                
+                Text(
+                  'POINTS',
+                  style: TextStyle(
+                    color: color.withOpacity(0.5),
+                    fontSize: 8,
+                    letterSpacing: 1,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
