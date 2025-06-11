@@ -79,3 +79,14 @@ avoidance_game/
 - Store high scores locally with SharedPreferences
 - Test multi-touch thoroughly for Medium+ modes
 - Optimize sprite rendering for 60fps performance
+
+## EXTREMELY IMPORTANT: Version Control Process
+**YOU MUST ALWAYS FOLLOW THIS PROCESS - NEVER FORGET!**
+
+After making any changes to the game:
+1. **Update @prompts.md** - Add ALL user prompts from the conversation
+2. **Commit** - Create a descriptive commit with all changes
+3. **Version** - Create a new version tag (e.g., v1.0.0-alpha.X)
+4. **Push** - Push both commits and tags to the repository
+
+This process is MANDATORY and must be performed EVERY TIME changes are made. The @prompts.md file serves as a complete history of user requests and must be kept up to date.

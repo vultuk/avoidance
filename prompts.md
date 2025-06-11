@@ -212,3 +212,6 @@ commit, version push please
 
 ## Update Prompts File
 Make sure you also update @prompts.md
+
+## Add Version Control Process to CLAUDE.md
+Please add the process - Update @prompts.md, commit, version and push - to @CLAUDE.md as extremely important. I want you to make sure that you ALWAYS perform this and NEVER forget!
