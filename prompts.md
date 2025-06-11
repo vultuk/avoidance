@@ -215,3 +215,6 @@ Make sure you also update @prompts.md
 
 ## Add Version Control Process to CLAUDE.md
 Please add the process - Update @prompts.md, commit, version and push - to @CLAUDE.md as extremely important. I want you to make sure that you ALWAYS perform this and NEVER forget!
+
+## Menu Restructure to Remove Scrolling
+The front menu looks amazing now! Only one issue, You have to scroll to see everything which seems a bit of a shame. Maybe instead of the mode select we have a 'Start Game' button then the leader board and scores under that. When tapping the 'start game' button it would then pop up asking for the difficulty using the beautiful buttons you have created!

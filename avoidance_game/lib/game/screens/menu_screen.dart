@@ -85,9 +85,9 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
       vsync: this,
     )..repeat(reverse: true);
     
-    // Button animations
+    // Button animations (3 buttons now: Start Game, Leaderboard, High Scores)
     _buttonControllers = List.generate(
-      6, // 4 difficulty buttons + 2 bottom buttons
+      3,
       (index) => AnimationController(
         duration: Duration(milliseconds: 400 + (index * 100)),
         vsync: this,
@@ -138,6 +138,20 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
       controller.dispose();
     }
     super.dispose();
+  }
+
+  void _showDifficultySelection() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierColor: Colors.black87,
+      builder: (context) => _DifficultySelectionDialog(
+        onDifficultySelected: (difficulty) {
+          Navigator.of(context).pop();
+          _startGame(difficulty);
+        },
+      ),
+    );
   }
 
   void _startGame(Difficulty difficulty) {
@@ -336,367 +350,229 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
           // Menu content
           SafeArea(
             child: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 20),
-                    
-                    // Animated title with enhanced effects
-                    AnimatedBuilder(
-                      animation: _titleController,
-                      builder: (context, child) {
-                        return Transform.scale(
-                          scale: _titleScale.value,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                // Multiple glow layers
-                                if (_titleGlow.value > 0.3)
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 30),
-                                    decoration: BoxDecoration(
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: GameColors.blue.withOpacity(_titleGlow.value * 0.2),
-                                          blurRadius: 60,
-                                          spreadRadius: 20,
-                                        ),
-                                        BoxShadow(
-                                          color: GameColors.orange.withOpacity(_titleGlow.value * 0.1),
-                                          blurRadius: 40,
-                                          spreadRadius: 10,
-                                        ),
-                                      ],
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Spacer(flex: 1),
+                  
+                  // Animated title with enhanced effects
+                  AnimatedBuilder(
+                    animation: _titleController,
+                    builder: (context, child) {
+                      return Transform.scale(
+                        scale: _titleScale.value,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Multiple glow layers
+                              if (_titleGlow.value > 0.3)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 30),
+                                  decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: GameColors.blue.withOpacity(_titleGlow.value * 0.2),
+                                        blurRadius: 60,
+                                        spreadRadius: 20,
+                                      ),
+                                      BoxShadow(
+                                        color: GameColors.orange.withOpacity(_titleGlow.value * 0.1),
+                                        blurRadius: 40,
+                                        spreadRadius: 10,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              
+                              // Title with enhanced styling
+                              Column(
+                                children: [
+                                  ShaderMask(
+                                    shaderCallback: (bounds) {
+                                      return LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                          GameColors.blue,
+                                          GameColors.uiText,
+                                          GameColors.orange,
+                                        ],
+                                        stops: [
+                                          0.0,
+                                          0.5 + math.sin(_pulseController.value * math.pi) * 0.2,
+                                          1.0,
+                                        ],
+                                      ).createShader(bounds);
+                                    },
+                                    child: const Text(
+                                      'AVOIDANCE',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 64,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 8,
+                                        shadows: [
+                                          Shadow(
+                                            offset: Offset(0, 4),
+                                            blurRadius: 20,
+                                            color: Colors.black54,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                
-                                // Title with enhanced styling
-                                Column(
-                                  children: [
-                                    ShaderMask(
-                                      shaderCallback: (bounds) {
-                                        return LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            GameColors.blue,
-                                            GameColors.uiText,
-                                            GameColors.orange,
-                                          ],
-                                          stops: [
-                                            0.0,
-                                            0.5 + math.sin(_pulseController.value * math.pi) * 0.2,
-                                            1.0,
-                                          ],
-                                        ).createShader(bounds);
-                                      },
-                                      child: const Text(
-                                        'AVOIDANCE',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 64,
-                                          fontWeight: FontWeight.w900,
-                                          letterSpacing: 8,
-                                          shadows: [
-                                            Shadow(
-                                              offset: Offset(0, 4),
-                                              blurRadius: 20,
-                                              color: Colors.black54,
+                                  
+                                  // Subtitle
+                                  AnimatedBuilder(
+                                    animation: _subtitleController,
+                                    builder: (context, child) {
+                                      return Opacity(
+                                        opacity: _subtitleOpacity.value,
+                                        child: Container(
+                                          margin: const EdgeInsets.only(top: 8),
+                                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: GameColors.blue.withOpacity(0.3),
+                                              width: 1,
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    
-                                    // Subtitle
-                                    AnimatedBuilder(
-                                      animation: _subtitleController,
-                                      builder: (context, child) {
-                                        return Opacity(
-                                          opacity: _subtitleOpacity.value,
-                                          child: Container(
-                                            margin: const EdgeInsets.only(top: 8),
-                                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: GameColors.blue.withOpacity(0.3),
-                                                width: 1,
-                                              ),
-                                              borderRadius: BorderRadius.circular(20),
-                                            ),
-                                            child: Text(
-                                              'SURVIVE THE COSMIC CHAOS',
-                                              style: TextStyle(
-                                                color: GameColors.uiText.withOpacity(0.8),
-                                                fontSize: 14,
-                                                letterSpacing: 2,
-                                                fontWeight: FontWeight.w300,
-                                              ),
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                          child: Text(
+                                            'SURVIVE THE COSMIC CHAOS',
+                                            style: TextStyle(
+                                              color: GameColors.uiText.withOpacity(0.8),
+                                              fontSize: 14,
+                                              letterSpacing: 2,
+                                              fontWeight: FontWeight.w300,
                                             ),
                                           ),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                    ),
-                    
-                    const SizedBox(height: 40),
-                    
-                    // Difficulty selection label
-                    AnimatedBuilder(
-                      animation: _buttonAnimations[0],
-                      builder: (context, child) {
-                        return Opacity(
-                          opacity: (_buttonAnimations[0].value + 1).clamp(0.0, 1.0),
-                          child: Text(
-                            'SELECT DIFFICULTY',
-                            style: TextStyle(
-                              color: GameColors.uiText.withOpacity(0.6),
-                              fontSize: 12,
-                              letterSpacing: 3,
-                              fontWeight: FontWeight.w500,
+                        ),
+                      );
+                    },
+                  ),
+                  
+                  const Spacer(flex: 2),
+                  
+                  // Main buttons
+                  Column(
+                    children: [
+                      // Start Game button
+                      AnimatedBuilder(
+                        animation: _buttonAnimations[0],
+                        builder: (context, child) {
+                          return Transform.translate(
+                            offset: Offset(0, -_buttonAnimations[0].value * 100),
+                            child: Opacity(
+                              opacity: (_buttonAnimations[0].value + 1).clamp(0.0, 1.0),
+                              child: _MainMenuButton(
+                                text: 'START GAME',
+                                icon: Icons.play_arrow,
+                                color: GameColors.blue,
+                                onPressed: _showDifficultySelection,
+                                isHovered: _hoveredButtonIndex == 0,
+                                onHover: (hover) {
+                                  setState(() {
+                                    _hoveredButtonIndex = hover ? 0 : -1;
+                                  });
+                                },
+                                isLarge: true,
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                    
-                    const SizedBox(height: 20),
-                    
-                    // Animated difficulty buttons in 2x2 grid with enhanced styling
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
+                          );
+                        },
+                      ),
+                      
+                      const SizedBox(height: 30),
+                      
+                      // Bottom buttons
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          // First row (Easy, Medium)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              AnimatedBuilder(
-                                animation: _buttonAnimations[0],
-                                builder: (context, child) {
-                                  return Transform.translate(
-                                    offset: Offset(_buttonAnimations[0].value * 300, 0),
-                                    child: Opacity(
-                                      opacity: (_buttonAnimations[0].value + 1).clamp(0.0, 1.0),
-                                      child: _EnhancedMenuButton(
-                                        text: Difficulty.easy.displayName,
-                                        color: GameColors.blue,
-                                        onPressed: () => _startGame(Difficulty.easy),
-                                        isHovered: _hoveredButtonIndex == 0,
-                                        onHover: (hover) {
-                                          setState(() {
-                                            _hoveredButtonIndex = hover ? 0 : -1;
-                                          });
-                                        },
-                                        difficultyLevel: 1,
-                                        description: 'Single ship • Blue waves',
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                              const SizedBox(width: 16),
-                              AnimatedBuilder(
-                                animation: _buttonAnimations[1],
-                                builder: (context, child) {
-                                  return Transform.translate(
-                                    offset: Offset(-_buttonAnimations[1].value * 300, 0),
-                                    child: Opacity(
-                                      opacity: (_buttonAnimations[1].value + 1).clamp(0.0, 1.0),
-                                      child: _EnhancedMenuButton(
-                                        text: Difficulty.medium.displayName,
-                                        color: GameColors.orange,
-                                        onPressed: () => _startGame(Difficulty.medium),
-                                        isHovered: _hoveredButtonIndex == 1,
-                                        onHover: (hover) {
-                                          setState(() {
-                                            _hoveredButtonIndex = hover ? 1 : -1;
-                                          });
-                                        },
-                                        difficultyLevel: 2,
-                                        description: 'Two ships • Multi waves',
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
+                          AnimatedBuilder(
+                            animation: _buttonAnimations[1],
+                            builder: (context, child) {
+                              return Transform.translate(
+                                offset: Offset(0, -_buttonAnimations[1].value * 100),
+                                child: Opacity(
+                                  opacity: (_buttonAnimations[1].value + 1).clamp(0.0, 1.0),
+                                  child: _IconMenuButton(
+                                    icon: Icons.leaderboard,
+                                    text: 'LEADERBOARD',
+                                    color: GameColors.uiText,
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        PageRouteBuilder(
+                                          pageBuilder: (context, animation, secondaryAnimation) =>
+                                              const LeaderboardScreen(),
+                                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                            return SlideTransition(
+                                              position: Tween<Offset>(
+                                                begin: const Offset(1.0, 0.0),
+                                                end: Offset.zero,
+                                              ).animate(CurvedAnimation(
+                                                parent: animation,
+                                                curve: Curves.easeOutCubic,
+                                              )),
+                                              child: child,
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    },
+                                    isHovered: _hoveredButtonIndex == 1,
+                                    onHover: (hover) {
+                                      setState(() {
+                                        _hoveredButtonIndex = hover ? 1 : -1;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                          const SizedBox(height: 16),
-                          // Second row (Hard, Ultra)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              AnimatedBuilder(
-                                animation: _buttonAnimations[2],
-                                builder: (context, child) {
-                                  return Transform.translate(
-                                    offset: Offset(_buttonAnimations[2].value * 300, 0),
-                                    child: Opacity(
-                                      opacity: (_buttonAnimations[2].value + 1).clamp(0.0, 1.0),
-                                      child: _EnhancedMenuButton(
-                                        text: Difficulty.hard.displayName,
-                                        color: GameColors.blue,
-                                        onPressed: () => _startGame(Difficulty.hard),
-                                        isHovered: _hoveredButtonIndex == 2,
-                                        onHover: (hover) {
-                                          setState(() {
-                                            _hoveredButtonIndex = hover ? 2 : -1;
-                                          });
-                                        },
-                                        difficultyLevel: 3,
-                                        description: 'Shields • Power-ups',
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                              const SizedBox(width: 16),
-                              AnimatedBuilder(
-                                animation: _buttonAnimations[3],
-                                builder: (context, child) {
-                                  return Transform.translate(
-                                    offset: Offset(-_buttonAnimations[3].value * 300, 0),
-                                    child: Opacity(
-                                      opacity: (_buttonAnimations[3].value + 1).clamp(0.0, 1.0),
-                                      child: _EnhancedMenuButton(
-                                        text: Difficulty.ultra.displayName,
-                                        color: GameColors.orange,
-                                        onPressed: () => _startGame(Difficulty.ultra),
-                                        isHovered: _hoveredButtonIndex == 3,
-                                        onHover: (hover) {
-                                          setState(() {
-                                            _hoveredButtonIndex = hover ? 3 : -1;
-                                          });
-                                        },
-                                        difficultyLevel: 4,
-                                        description: 'Astronaut • Oxygen',
-                                        isUltra: true,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
+                          const SizedBox(width: 16),
+                          AnimatedBuilder(
+                            animation: _buttonAnimations[2],
+                            builder: (context, child) {
+                              return Transform.translate(
+                                offset: Offset(0, -_buttonAnimations[2].value * 100),
+                                child: Opacity(
+                                  opacity: (_buttonAnimations[2].value + 1).clamp(0.0, 1.0),
+                                  child: _IconMenuButton(
+                                    icon: Icons.emoji_events,
+                                    text: 'HIGH SCORES',
+                                    color: GameColors.uiText,
+                                    onPressed: _showHighScores,
+                                    isHovered: _hoveredButtonIndex == 2,
+                                    onHover: (hover) {
+                                      setState(() {
+                                        _hoveredButtonIndex = hover ? 2 : -1;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
-                    ),
-                    
-                    const SizedBox(height: 50),
-                    
-                    // Divider
-                    AnimatedBuilder(
-                      animation: _buttonAnimations[4],
-                      builder: (context, child) {
-                        return Opacity(
-                          opacity: (_buttonAnimations[4].value + 1).clamp(0.0, 1.0),
-                          child: Container(
-                            width: 200,
-                            height: 1,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  Colors.transparent,
-                                  GameColors.uiText.withOpacity(0.3),
-                                  Colors.transparent,
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    
-                    const SizedBox(height: 20),
-                    
-                    // Bottom buttons with icons
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AnimatedBuilder(
-                          animation: _buttonAnimations[4],
-                          builder: (context, child) {
-                            return Transform.translate(
-                              offset: Offset(0, -_buttonAnimations[4].value * 100),
-                              child: Opacity(
-                                opacity: (_buttonAnimations[4].value + 1).clamp(0.0, 1.0),
-                                child: _IconMenuButton(
-                                  icon: Icons.leaderboard,
-                                  text: 'LEADERBOARD',
-                                  color: GameColors.uiText,
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      PageRouteBuilder(
-                                        pageBuilder: (context, animation, secondaryAnimation) =>
-                                            const LeaderboardScreen(),
-                                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                          return SlideTransition(
-                                            position: Tween<Offset>(
-                                              begin: const Offset(1.0, 0.0),
-                                              end: Offset.zero,
-                                            ).animate(CurvedAnimation(
-                                              parent: animation,
-                                              curve: Curves.easeOutCubic,
-                                            )),
-                                            child: child,
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  },
-                                  isHovered: _hoveredButtonIndex == 4,
-                                  onHover: (hover) {
-                                    setState(() {
-                                      _hoveredButtonIndex = hover ? 4 : -1;
-                                    });
-                                  },
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(width: 16),
-                        AnimatedBuilder(
-                          animation: _buttonAnimations[5],
-                          builder: (context, child) {
-                            return Transform.translate(
-                              offset: Offset(0, -_buttonAnimations[5].value * 100),
-                              child: Opacity(
-                                opacity: (_buttonAnimations[5].value + 1).clamp(0.0, 1.0),
-                                child: _IconMenuButton(
-                                  icon: Icons.emoji_events,
-                                  text: 'HIGH SCORES',
-                                  color: GameColors.uiText,
-                                  onPressed: _showHighScores,
-                                  isHovered: _hoveredButtonIndex == 5,
-                                  onHover: (hover) {
-                                    setState(() {
-                                      _hoveredButtonIndex = hover ? 5 : -1;
-                                    });
-                                  },
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                    
-                    const SizedBox(height: 30),
-                  ],
-                ),
+                    ],
+                  ),
+                  
+                  const Spacer(flex: 2),
+                ],
               ),
             ),
           ),
@@ -706,36 +582,241 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
   }
 }
 
-class _EnhancedMenuButton extends StatefulWidget {
-  final String text;
-  final Color color;
-  final VoidCallback onPressed;
-  final bool isHovered;
-  final Function(bool) onHover;
-  final int? difficultyLevel;
-  final String? description;
-  final bool isUltra;
+// Difficulty selection dialog
+class _DifficultySelectionDialog extends StatefulWidget {
+  final Function(Difficulty) onDifficultySelected;
 
-  const _EnhancedMenuButton({
-    required this.text,
-    required this.color,
-    required this.onPressed,
-    required this.isHovered,
-    required this.onHover,
-    this.difficultyLevel,
-    this.description,
-    this.isUltra = false,
+  const _DifficultySelectionDialog({
+    required this.onDifficultySelected,
   });
 
   @override
-  State<_EnhancedMenuButton> createState() => _EnhancedMenuButtonState();
+  State<_DifficultySelectionDialog> createState() => _DifficultySelectionDialogState();
 }
 
-class _EnhancedMenuButtonState extends State<_EnhancedMenuButton>
+class _DifficultySelectionDialogState extends State<_DifficultySelectionDialog>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late List<Animation<double>> _animations;
+  int _hoveredIndex = -1;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    
+    _animations = List.generate(4, (index) {
+      return Tween<double>(
+        begin: 0.0,
+        end: 1.0,
+      ).animate(CurvedAnimation(
+        parent: _controller,
+        curve: Interval(
+          index * 0.1,
+          0.6 + index * 0.1,
+          curve: Curves.easeOutBack,
+        ),
+      ));
+    });
+    
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: 0.8 + _controller.value * 0.2,
+          child: Dialog(
+            backgroundColor: GameColors.background.withOpacity(0.95),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+              side: BorderSide(
+                color: GameColors.blue.withOpacity(0.5),
+                width: 2,
+              ),
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'SELECT DIFFICULTY',
+                    style: TextStyle(
+                      color: GameColors.uiText,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  
+                  // Difficulty grid
+                  Column(
+                    children: [
+                      // First row (Easy, Medium)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AnimatedBuilder(
+                            animation: _animations[0],
+                            builder: (context, child) {
+                              return Transform.scale(
+                                scale: _animations[0].value,
+                                child: Opacity(
+                                  opacity: _animations[0].value,
+                                  child: _DifficultyButton(
+                                    difficulty: Difficulty.easy,
+                                    isHovered: _hoveredIndex == 0,
+                                    onHover: (hover) {
+                                      setState(() {
+                                        _hoveredIndex = hover ? 0 : -1;
+                                      });
+                                    },
+                                    onPressed: () => widget.onDifficultySelected(Difficulty.easy),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 16),
+                          AnimatedBuilder(
+                            animation: _animations[1],
+                            builder: (context, child) {
+                              return Transform.scale(
+                                scale: _animations[1].value,
+                                child: Opacity(
+                                  opacity: _animations[1].value,
+                                  child: _DifficultyButton(
+                                    difficulty: Difficulty.medium,
+                                    isHovered: _hoveredIndex == 1,
+                                    onHover: (hover) {
+                                      setState(() {
+                                        _hoveredIndex = hover ? 1 : -1;
+                                      });
+                                    },
+                                    onPressed: () => widget.onDifficultySelected(Difficulty.medium),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      // Second row (Hard, Ultra)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AnimatedBuilder(
+                            animation: _animations[2],
+                            builder: (context, child) {
+                              return Transform.scale(
+                                scale: _animations[2].value,
+                                child: Opacity(
+                                  opacity: _animations[2].value,
+                                  child: _DifficultyButton(
+                                    difficulty: Difficulty.hard,
+                                    isHovered: _hoveredIndex == 2,
+                                    onHover: (hover) {
+                                      setState(() {
+                                        _hoveredIndex = hover ? 2 : -1;
+                                      });
+                                    },
+                                    onPressed: () => widget.onDifficultySelected(Difficulty.hard),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 16),
+                          AnimatedBuilder(
+                            animation: _animations[3],
+                            builder: (context, child) {
+                              return Transform.scale(
+                                scale: _animations[3].value,
+                                child: Opacity(
+                                  opacity: _animations[3].value,
+                                  child: _DifficultyButton(
+                                    difficulty: Difficulty.ultra,
+                                    isHovered: _hoveredIndex == 3,
+                                    onHover: (hover) {
+                                      setState(() {
+                                        _hoveredIndex = hover ? 3 : -1;
+                                      });
+                                    },
+                                    onPressed: () => widget.onDifficultySelected(Difficulty.ultra),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+// Difficulty button for the popup
+class _DifficultyButton extends StatefulWidget {
+  final Difficulty difficulty;
+  final bool isHovered;
+  final Function(bool) onHover;
+  final VoidCallback onPressed;
+
+  const _DifficultyButton({
+    required this.difficulty,
+    required this.isHovered,
+    required this.onHover,
+    required this.onPressed,
+  });
+
+  @override
+  State<_DifficultyButton> createState() => _DifficultyButtonState();
+}
+
+class _DifficultyButtonState extends State<_DifficultyButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _glowAnimation;
+
+  Color get color => widget.difficulty == Difficulty.easy || widget.difficulty == Difficulty.hard
+      ? GameColors.blue
+      : GameColors.orange;
+
+  String get description {
+    switch (widget.difficulty) {
+      case Difficulty.easy:
+        return 'Single ship • Blue waves';
+      case Difficulty.medium:
+        return 'Two ships • Multi waves';
+      case Difficulty.hard:
+        return 'Shields • Power-ups';
+      case Difficulty.ultra:
+        return 'Astronaut • Oxygen';
+    }
+  }
 
   @override
   void initState() {
@@ -763,7 +844,7 @@ class _EnhancedMenuButtonState extends State<_EnhancedMenuButton>
   }
 
   @override
-  void didUpdateWidget(_EnhancedMenuButton oldWidget) {
+  void didUpdateWidget(_DifficultyButton oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.isHovered && !oldWidget.isHovered) {
       _controller.forward();
@@ -795,7 +876,7 @@ class _EnhancedMenuButtonState extends State<_EnhancedMenuButton>
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: widget.color.withOpacity(0.2 * _glowAnimation.value),
+                    color: color.withOpacity(0.2 * _glowAnimation.value),
                     blurRadius: 20 * _glowAnimation.value,
                     spreadRadius: 2 * _glowAnimation.value,
                   ),
@@ -818,19 +899,19 @@ class _EnhancedMenuButtonState extends State<_EnhancedMenuButton>
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          widget.color.withOpacity(0.15),
-                          widget.color.withOpacity(0.05),
+                          color.withOpacity(0.15),
+                          color.withOpacity(0.05),
                         ],
                       ),
                       border: Border.all(
-                        color: widget.color.withOpacity(0.8 + 0.2 * _glowAnimation.value),
+                        color: color.withOpacity(0.8 + 0.2 * _glowAnimation.value),
                         width: 2,
                       ),
                     ),
                     child: Stack(
                       children: [
                         // Ultra badge
-                        if (widget.isUltra)
+                        if (widget.difficulty == Difficulty.ultra)
                           Positioned(
                             top: 8,
                             right: 8,
@@ -864,28 +945,27 @@ class _EnhancedMenuButtonState extends State<_EnhancedMenuButton>
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               // Difficulty stars
-                              if (widget.difficultyLevel != null)
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: List.generate(
-                                    4,
-                                    (index) => Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                                      child: Icon(
-                                        index < widget.difficultyLevel! ? Icons.star : Icons.star_border,
-                                        size: 10,
-                                        color: widget.color.withOpacity(0.6),
-                                      ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List.generate(
+                                  4,
+                                  (index) => Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                                    child: Icon(
+                                      index < widget.difficulty.index + 1 ? Icons.star : Icons.star_border,
+                                      size: 10,
+                                      color: color.withOpacity(0.6),
                                     ),
                                   ),
                                 ),
+                              ),
                               const SizedBox(height: 4),
                               
                               // Title
                               Text(
-                                widget.text,
+                                widget.difficulty.displayName,
                                 style: TextStyle(
-                                  color: widget.color,
+                                  color: color,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 2,
@@ -893,18 +973,16 @@ class _EnhancedMenuButtonState extends State<_EnhancedMenuButton>
                               ),
                               
                               // Description
-                              if (widget.description != null) ...[
-                                const SizedBox(height: 4),
-                                Text(
-                                  widget.description!,
-                                  style: TextStyle(
-                                    color: widget.color.withOpacity(0.6),
-                                    fontSize: 10,
-                                    letterSpacing: 0.5,
-                                  ),
-                                  textAlign: TextAlign.center,
+                              const SizedBox(height: 4),
+                              Text(
+                                description,
+                                style: TextStyle(
+                                  color: color.withOpacity(0.6),
+                                  fontSize: 10,
+                                  letterSpacing: 0.5,
                                 ),
-                              ],
+                                textAlign: TextAlign.center,
+                              ),
                             ],
                           ),
                         ),
@@ -921,6 +999,161 @@ class _EnhancedMenuButtonState extends State<_EnhancedMenuButton>
   }
 }
 
+// Main menu button
+class _MainMenuButton extends StatefulWidget {
+  final String text;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onPressed;
+  final bool isHovered;
+  final Function(bool) onHover;
+  final bool isLarge;
+
+  const _MainMenuButton({
+    required this.text,
+    required this.icon,
+    required this.color,
+    required this.onPressed,
+    required this.isHovered,
+    required this.onHover,
+    this.isLarge = false,
+  });
+
+  @override
+  State<_MainMenuButton> createState() => _MainMenuButtonState();
+}
+
+class _MainMenuButtonState extends State<_MainMenuButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _glowAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.05,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutCubic,
+    ));
+    
+    _glowAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutCubic,
+    ));
+  }
+
+  @override
+  void didUpdateWidget(_MainMenuButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isHovered && !oldWidget.isHovered) {
+      _controller.forward();
+    } else if (!widget.isHovered && oldWidget.isHovered) {
+      _controller.reverse();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final width = widget.isLarge ? 250.0 : 200.0;
+    final height = widget.isLarge ? 70.0 : 60.0;
+    
+    return MouseRegion(
+      onEnter: (_) => widget.onHover(true),
+      onExit: (_) => widget.onHover(false),
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: _scaleAnimation.value,
+            child: Container(
+              width: width,
+              height: height,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: widget.color.withOpacity(0.3 * _glowAnimation.value),
+                    blurRadius: 30 * _glowAnimation.value,
+                    spreadRadius: 5 * _glowAnimation.value,
+                  ),
+                  const BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: widget.onPressed,
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          widget.color.withOpacity(0.2),
+                          widget.color.withOpacity(0.1),
+                        ],
+                      ),
+                      border: Border.all(
+                        color: widget.color.withOpacity(0.8 + 0.2 * _glowAnimation.value),
+                        width: 2,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          widget.icon,
+                          color: widget.color,
+                          size: widget.isLarge ? 32 : 24,
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          widget.text,
+                          style: TextStyle(
+                            color: widget.color,
+                            fontSize: widget.isLarge ? 22 : 18,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// Icon menu button (unchanged)
 class _IconMenuButton extends StatefulWidget {
   final IconData icon;
   final String text;
@@ -1034,6 +1267,7 @@ class _IconMenuButtonState extends State<_IconMenuButton>
   }
 }
 
+// Painters remain unchanged
 class EnhancedStarFieldPainter extends CustomPainter {
   final double animationValue;
   final List<Star> stars = [];
@@ -1181,6 +1415,7 @@ class FloatingParticlesPainter extends CustomPainter {
   bool shouldRepaint(FloatingParticlesPainter oldDelegate) => true;
 }
 
+// Data classes remain unchanged
 class Star {
   final double x;
   final double y;
