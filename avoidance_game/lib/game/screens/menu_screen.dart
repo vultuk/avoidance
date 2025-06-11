@@ -29,9 +29,9 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     
-    // Star field animation
+    // Star field animation - slower to match game
     _starController = AnimationController(
-      duration: const Duration(seconds: 60),
+      duration: const Duration(seconds: 120),
       vsync: this,
     )..repeat();
     
@@ -680,9 +680,9 @@ class _EnhancedMenuButtonState extends State<_EnhancedMenuButton>
                               widget.text,
                               style: TextStyle(
                                 color: widget.color,
-                                fontSize: widget.isSmall ? GameSizes.fontSize : GameSizes.fontSize + 4,
+                                fontSize: widget.isSmall ? 16 : GameSizes.fontSize + 2,
                                 fontWeight: FontWeight.bold,
-                                letterSpacing: 2,
+                                letterSpacing: widget.isSmall ? 1 : 2,
                               ),
                             ),
                           ],
@@ -714,7 +714,7 @@ class EnhancedStarFieldPainter extends CustomPainter {
           x: random.nextDouble(),
           y: random.nextDouble(),
           size: random.nextDouble() * 2 + 0.5,
-          speed: random.nextDouble() * 0.3 + 0.05,
+          speed: random.nextDouble() * 0.1 + 0.02,
           twinkle: random.nextDouble(),
         ));
       }
