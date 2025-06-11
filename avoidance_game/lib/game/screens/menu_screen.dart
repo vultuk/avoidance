@@ -1402,8 +1402,12 @@ class _HighScoresDialogState extends State<_HighScoresDialog>
           child: Dialog(
             backgroundColor: Colors.transparent,
             elevation: 0,
+            insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 60),
             child: Container(
-              width: 400,
+              width: 350,
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.85,
+              ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
                 gradient: LinearGradient(
@@ -1442,13 +1446,13 @@ class _HighScoresDialogState extends State<_HighScoresDialog>
                     ),
                   ),
                   
-                  // Content
+                  // Content with reduced padding
                   Padding(
-                    padding: const EdgeInsets.all(32),
+                    padding: const EdgeInsets.all(20),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Title with trophy icon
+                        // Title with smaller trophy icon
                         AnimatedBuilder(
                           animation: _titleAnimation,
                           builder: (context, child) {
@@ -1456,20 +1460,21 @@ class _HighScoresDialogState extends State<_HighScoresDialog>
                               scale: _titleAnimation.value,
                               child: Opacity(
                                 opacity: _titleAnimation.value,
-                                child: Column(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
                                       Icons.emoji_events,
                                       color: GameColors.orange,
-                                      size: 48,
+                                      size: 32,
                                       shadows: [
                                         Shadow(
                                           color: GameColors.orange.withOpacity(0.5),
-                                          blurRadius: 20,
+                                          blurRadius: 15,
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 8),
+                                    const SizedBox(width: 12),
                                     ShaderMask(
                                       shaderCallback: (bounds) {
                                         return LinearGradient(
@@ -1484,36 +1489,12 @@ class _HighScoresDialogState extends State<_HighScoresDialog>
                                         'HIGH SCORES',
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 32,
+                                          fontSize: 24,
                                           fontWeight: FontWeight.bold,
-                                          letterSpacing: 3,
+                                          letterSpacing: 2,
                                         ),
                                       ),
                                     ),
-                                    if (bestScore > 0)
-                                      Container(
-                                        margin: const EdgeInsets.only(top: 8),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, 
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(20),
-                                          border: Border.all(
-                                            color: GameColors.orange.withOpacity(0.5),
-                                            width: 1,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          'BEST: ${bestScore.toString().padLeft(6, '0')}',
-                                          style: TextStyle(
-                                            color: GameColors.orange,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 1,
-                                          ),
-                                        ),
-                                      ),
                                   ],
                                 ),
                               ),
@@ -1521,7 +1502,7 @@ class _HighScoresDialogState extends State<_HighScoresDialog>
                           },
                         ),
                         
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 16),
                         
                         // Score entries
                         ...Difficulty.values.asMap().entries.map((entry) {
@@ -1549,6 +1530,7 @@ class _HighScoresDialogState extends State<_HighScoresDialog>
                                     rank: index + 1,
                                     isHighest: score == bestScore && score > 0,
                                     animationValue: _scoreController.value,
+                                    compact: true,
                                   ),
                                 ),
                               );
@@ -1556,7 +1538,7 @@ class _HighScoresDialogState extends State<_HighScoresDialog>
                           );
                         }),
                         
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 16),
                         
                         // Close button
                         AnimatedBuilder(
@@ -1571,8 +1553,8 @@ class _HighScoresDialogState extends State<_HighScoresDialog>
                                   borderRadius: BorderRadius.circular(12),
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
-                                      horizontal: 32, 
-                                      vertical: 12,
+                                      horizontal: 24, 
+                                      vertical: 8,
                                     ),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12),
@@ -1593,16 +1575,16 @@ class _HighScoresDialogState extends State<_HighScoresDialog>
                                         Icon(
                                           Icons.close,
                                           color: GameColors.blue,
-                                          size: 20,
+                                          size: 18,
                                         ),
-                                        const SizedBox(width: 8),
+                                        const SizedBox(width: 6),
                                         const Text(
                                           'CLOSE',
                                           style: TextStyle(
                                             color: GameColors.blue,
-                                            fontSize: 16,
+                                            fontSize: 14,
                                             fontWeight: FontWeight.bold,
-                                            letterSpacing: 2,
+                                            letterSpacing: 1.5,
                                           ),
                                         ),
                                       ],
@@ -1634,6 +1616,7 @@ class _HighScoreEntry extends StatelessWidget {
   final int rank;
   final bool isHighest;
   final double animationValue;
+  final bool compact;
 
   const _HighScoreEntry({
     required this.difficulty,
@@ -1642,6 +1625,7 @@ class _HighScoreEntry extends StatelessWidget {
     required this.rank,
     required this.isHighest,
     required this.animationValue,
+    this.compact = false,
   });
 
   String get description {
@@ -1660,13 +1644,13 @@ class _HighScoreEntry extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.only(bottom: compact ? 8 : 12),
       child: Material(
         color: Colors.transparent,
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(compact ? 10 : 16),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -1682,17 +1666,17 @@ class _HighScoreEntry extends StatelessWidget {
             boxShadow: isHighest ? [
               BoxShadow(
                 color: color.withOpacity(0.2),
-                blurRadius: 15,
-                spreadRadius: 2,
+                blurRadius: 10,
+                spreadRadius: 1,
               ),
             ] : null,
           ),
           child: Row(
             children: [
-              // Rank badge
+              // Rank badge - smaller when compact
               Container(
-                width: 40,
-                height: 40,
+                width: compact ? 30 : 40,
+                height: compact ? 30 : 40,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
@@ -1713,7 +1697,7 @@ class _HighScoreEntry extends StatelessWidget {
                       4,
                       (index) => Icon(
                         index < rank ? Icons.star : Icons.star_border,
-                        size: 8,
+                        size: compact ? 6 : 8,
                         color: color,
                       ),
                     ),
@@ -1721,7 +1705,7 @@ class _HighScoreEntry extends StatelessWidget {
                 ),
               ),
               
-              const SizedBox(width: 16),
+              SizedBox(width: compact ? 10 : 16),
               
               // Difficulty info
               Expanded(
@@ -1734,48 +1718,50 @@ class _HighScoreEntry extends StatelessWidget {
                           difficulty.displayName,
                           style: TextStyle(
                             color: color,
-                            fontSize: 18,
+                            fontSize: compact ? 14 : 18,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 1,
+                            letterSpacing: 0.5,
                           ),
                         ),
                         if (isHighest && score > 0) ...[
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 6),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
+                              horizontal: 4,
+                              vertical: 1,
                             ),
                             decoration: BoxDecoration(
                               color: GameColors.orange.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(6),
                               border: Border.all(
                                 color: GameColors.orange.withOpacity(0.5),
                                 width: 1,
                               ),
                             ),
-                            child: const Text(
+                            child: Text(
                               'BEST',
                               style: TextStyle(
                                 color: GameColors.orange,
-                                fontSize: 8,
+                                fontSize: compact ? 6 : 8,
                                 fontWeight: FontWeight.bold,
-                                letterSpacing: 1,
+                                letterSpacing: 0.5,
                               ),
                             ),
                           ),
                         ],
                       ],
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      description,
-                      style: TextStyle(
-                        color: color.withOpacity(0.6),
-                        fontSize: 10,
-                        letterSpacing: 0.5,
+                    if (!compact) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        description,
+                        style: TextStyle(
+                          color: color.withOpacity(0.6),
+                          fontSize: 10,
+                          letterSpacing: 0.5,
+                        ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
               ),
@@ -1792,14 +1778,14 @@ class _HighScoreEntry extends StatelessWidget {
                         displayScore.toString().padLeft(6, '0'),
                         style: TextStyle(
                           color: color,
-                          fontSize: 24,
+                          fontSize: compact ? 18 : 24,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'monospace',
-                          letterSpacing: 2,
+                          letterSpacing: compact ? 1 : 2,
                           shadows: [
                             Shadow(
                               color: color.withOpacity(0.5),
-                              blurRadius: 10,
+                              blurRadius: 8,
                             ),
                           ],
                         ),
@@ -1810,8 +1796,8 @@ class _HighScoreEntry extends StatelessWidget {
                     'POINTS',
                     style: TextStyle(
                       color: color.withOpacity(0.5),
-                      fontSize: 8,
-                      letterSpacing: 1,
+                      fontSize: compact ? 6 : 8,
+                      letterSpacing: 0.5,
                       fontWeight: FontWeight.w500,
                     ),
                   ),

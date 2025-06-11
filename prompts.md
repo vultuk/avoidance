@@ -221,3 +221,6 @@ The front menu looks amazing now! Only one issue, You have to scroll to see ever
 
 ## Clean Up High Scores Screen
 Please can you clean up the Highest Score screen. Make it look amazing. Here's how it currently looks - https://i.postimg.cc/sgPfkYB3/Screenshot-20250611-104102.jpg
+
+## High Scores Dialog Going Off Screen
+Looks amazing, but the scores go off screen and it's not possible to scroll. I think they need to all be visible at once, no scrolling and no going off screen. Please see this image so you understand - https://i.postimg.cc/jqWMZv9n/Screenshot-20250611-105346.jpg
