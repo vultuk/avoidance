@@ -218,3 +218,6 @@ Please add the process - Update @prompts.md, commit, version and push - to @CLAU
 
 ## Menu Restructure to Remove Scrolling
 The front menu looks amazing now! Only one issue, You have to scroll to see everything which seems a bit of a shame. Maybe instead of the mode select we have a 'Start Game' button then the leader board and scores under that. When tapping the 'start game' button it would then pop up asking for the difficulty using the beautiful buttons you have created!
+
+## Clean Up High Scores Screen
+Please can you clean up the Highest Score screen. Make it look amazing. Here's how it currently looks - https://i.postimg.cc/sgPfkYB3/Screenshot-20250611-104102.jpg
